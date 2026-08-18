@@ -1,0 +1,55 @@
+package com.ricardosbar.domain.cliente;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
+@Table(name = "clientes")
+@Entity(name = "Medico")
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class Cliente {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nome;
+    private String telefone;
+    private String endereco;
+    private String bairro;
+    private String cidade;
+    private String uf;
+    private String valor_ult_pagto;
+    private LocalDateTime dt_ult_pago;
+    private String hora_ult_pago;
+    private Double saldo_pagar;
+    private LocalDateTime primeira_compra;
+    private Double limite;
+    private Boolean bloqueado;
+    private String observacao;
+    private String email;
+
+
+    public Cliente(DadosCadastroCliente dados) {
+        this.nome = dados.nome();
+        this.telefone = dados.telefone();
+        this.endereco = dados.endereco();
+        this.bairro = dados.bairro();
+        this.cidade = dados.cidade();
+        this.uf = dados.uf();
+        this.valor_ult_pagto = dados.valor_ult_pagto();
+        this.dt_ult_pago = dados.dt_ult_pago();
+        this.hora_ult_pago = dados.hora_ult_pago();
+        this.saldo_pagar = dados.saldo_pagar();
+        this.primeira_compra = dados.primeira_compra();
+        this.limite = dados.limite();
+        this.bloqueado = dados.bloqueado();
+        this.observacao = dados.observacao();
+        this.email = dados.email();
+    }
+}
