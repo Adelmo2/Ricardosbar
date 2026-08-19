@@ -21,6 +21,15 @@ public class CadastroDeClientes {
             throw new validacaoException("Cliente já cadastrado!");
         }
 
+        if (!dados.email().isEmpty()) {
+            if (!dados.email().contains("@")) {
+                throw new validacaoException("Email invalido!");
+            }
+            if (!dados.email().contains(".")) {
+                throw new validacaoException("Email invalido!");
+            }
+        }
+
         var cliente = new Cliente(dados);
         clienteRepository.save(cliente);
         return new DadosDetalhamentoCliente(cliente);
