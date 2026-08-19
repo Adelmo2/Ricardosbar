@@ -53,4 +53,13 @@ public class Cliente {
         this.observacao = dados.observacao();
         this.email = dados.email();
     }
+
+    public void excluir() {
+        this.bloqueado = true;
+    }
+
+    public void ativar() {
+        this.bloqueado = false;
+    }
+
 }

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("clientes")
 @SecurityRequirement(name = "bearer-key")
@@ -23,7 +25,7 @@ public class ClienteController {
 
     @PostMapping
     @Transactional
-    //@RequestMapping("/cadastrar")
+    @RequestMapping("/cadastrar")
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroCliente dados, UriComponentsBuilder uriBuilder){
         //clienteRepository.save(cliente);
         var dto = cadastroDeClientes.cadastrar(dados);
@@ -36,5 +38,39 @@ public class ClienteController {
         System.out.println("Nome: " + dados.nome() + " Telefone: " + dados.telefone() + " Cidade:" + dados.cidade() + " UF:" + dados.uf());
         var cliente = new Cliente(dados);
         return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+    }
+
+    @GetMapping
+    @RequestMapping("/listartodos")
+    public List<Cliente> listarTodos() {
+        return clienteRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity detalhar(@PathVariable Long id) {
+        var cliente = clienteRepository.getReferenceById(id);
+        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+    }
+
+    @GetMapping("/saldo/{id}")
+    public ResponseEntity saldo(@PathVariable Long id) {
+        var cliente = clienteRepository.getReferenceById(id);
+        return ResponseEntity.ok(new SaldoCliente(cliente));
+    }
+
+    @DeleteMapping("/inativar/{id}")
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity excluir(@PathVariable Long id) {
+        var cliente = clienteRepository.getReferenceById(id);
+        cliente.excluir();
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/ativar/{id}")
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity ativar(@PathVariable Long id) {
+        var cliente = clienteRepository.getReferenceById(id);
+        cliente.ativar();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -13,7 +13,7 @@ public class CadastroDeClientes {
     public DadosDetalhamentoCliente cadastrar(DadosCadastroCliente dados) {
 
         if (dados.nome().isEmpty()) {
-            throw new validacaoException("O nome do cliente é obrigatório!");
+            throw new validacaoException("O nome do cliente é obrigatório!!");
         }
 
         var temCliente = clienteRepository.clienteDuplicado(dados.nome());
@@ -23,10 +23,10 @@ public class CadastroDeClientes {
 
         if (!dados.email().isEmpty()) {
             if (!dados.email().contains("@")) {
-                throw new validacaoException("Email invalido!");
+                throw new validacaoException("Email inválido!!");
             }
             if (!dados.email().contains(".")) {
-                throw new validacaoException("Email invalido!");
+                throw new validacaoException("Email inválido!");
             }
         }
 

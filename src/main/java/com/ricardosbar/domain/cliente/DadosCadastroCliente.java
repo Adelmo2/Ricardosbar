@@ -1,5 +1,6 @@
 package com.ricardosbar.domain.cliente;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -25,6 +26,8 @@ public record DadosCadastroCliente(
         Double limite,
         Boolean bloqueado,
         String observacao,
+        
+        @Email(message = "Email inválido...")
         String email
 ) {
 }
