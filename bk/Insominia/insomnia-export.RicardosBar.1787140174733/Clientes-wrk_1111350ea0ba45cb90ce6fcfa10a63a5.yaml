@@ -1,0 +1,65 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Clientes
+meta:
+  id: wrk_1111350ea0ba45cb90ce6fcfa10a63a5
+  created: 1787128676954
+  modified: 1787128807525
+  description: ""
+collection:
+  - url: http://localhost:8080/clientes/listarapi
+    name: TesteListarAPIClientes
+    meta:
+      id: req_92fd7d98c7db4001b4a51e7e69632a30
+      created: 1787128817433
+      modified: 1787140064512
+      isPrivate: false
+      description: ""
+      sortKey: -1787128817433
+    method: GET
+    body:
+      mimeType: application/json
+      text: |
+        {
+        	"nome": "Adelmo Sepúlveda Ricardo",
+        	"telefone": "11-98414-0890",
+        	"cidade": "LONDRINA",
+        	"uf": "PR",
+        	"email": "adelmo2@gmail.com"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: bearer
+      token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZGVsbW8iLCJpc3MiOiJBUEkgcHJlX3N1cHBsaWVyLnN1cHBsaWVyIiwiZXhwIjoxNzg3MTQ1NTAwfQ.qzCfuCFlPZBo_rxv4VUjqnjILkU3FZiNMuLkesm5aBY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_796cbef3be4606012c8c94d5cdb77d315875aea1
+    created: 1787128676964
+    modified: 1787130205616
+  cookies:
+    - id: e8eafea6-9c53-4b5c-a442-16ab3ea23cd6
+      key: JSESSIONID
+      value: 2B84718DCA2614E3CDB8ED32396A3546
+      domain: localhost
+      path: /
+      secure: false
+      httpOnly: true
+      hostOnly: true
+environments:
+  name: Base Environment
+  meta:
+    id: env_796cbef3be4606012c8c94d5cdb77d315875aea1
+    created: 1787128676959
+    modified: 1787128676959
+    isPrivate: false

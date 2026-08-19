@@ -1,0 +1,50 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Usuarios
+meta:
+  id: wrk_43dfa85faf274a14b39773260f3ca9d4
+  created: 1787138113217
+  modified: 1787138113217
+  description: ""
+collection:
+  - url: http://localhost:8080/login
+    name: Login
+    meta:
+      id: req_807fd2926791434ca4600444796fa7d1
+      created: 1787138123305
+      modified: 1787138295598
+      isPrivate: false
+      description: ""
+      sortKey: -1787138123305
+    method: POST
+    body:
+      mimeType: application/json
+      text: |
+        {
+        	"login": "adelmo",
+        	"senha": "123456"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_c7d31a3b6c89b61128e130797e3883e63e2f1e02
+    created: 1787138113257
+    modified: 1787138113257
+environments:
+  name: Base Environment
+  meta:
+    id: env_c7d31a3b6c89b61128e130797e3883e63e2f1e02
+    created: 1787138113227
+    modified: 1787138113227
+    isPrivate: false
