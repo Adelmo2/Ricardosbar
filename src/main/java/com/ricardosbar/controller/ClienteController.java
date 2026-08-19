@@ -1,16 +1,18 @@
 package com.ricardosbar.controller;
 
 import com.ricardosbar.domain.cliente.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("clientes")
-//@SecurityRequirement(name = "bearer-key")
+@SecurityRequirement(name = "bearer-key")
 public class ClienteController {
 
     @Autowired
@@ -21,8 +23,8 @@ public class ClienteController {
 
     @PostMapping
     @Transactional
-    @RequestMapping("/cadastrar")
-    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroCliente dados, UriBuilder uriBuilder){
+    //@RequestMapping("/cadastrar")
+    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroCliente dados, UriComponentsBuilder uriBuilder){
         //clienteRepository.save(cliente);
         var dto = cadastroDeClientes.cadastrar(dados);
         return ResponseEntity.ok(dto);

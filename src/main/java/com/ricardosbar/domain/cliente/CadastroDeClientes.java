@@ -30,7 +30,24 @@ public class CadastroDeClientes {
             }
         }
 
-        var cliente = new Cliente(dados);
+        var cliente = new Cliente(
+                null,
+                dados.nome(),
+                dados.telefone(),
+                dados.endereco(),
+                dados.bairro(),
+                dados.cidade(),
+                dados.uf(),
+                dados.valor_ult_pagto(),
+                dados.dt_ult_pago(),
+                dados.hora_ult_pago(),
+                dados.saldo_pagar(),
+                dados.primeira_compra(),
+                dados.limite(),
+                dados.bloqueado(),
+                dados.observacao(),
+                dados.email()
+                );
         clienteRepository.save(cliente);
         return new DadosDetalhamentoCliente(cliente);
     }

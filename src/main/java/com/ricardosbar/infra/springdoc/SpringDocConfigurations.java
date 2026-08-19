@@ -23,7 +23,7 @@ public class SpringDocConfigurations {
                                         .bearerFormat("JWT")))
                 .info(new Info()
                         .title("API pre_supplier.supplier")
-                        .description("API Rest da aplicação PreSupplier, contendo as funcionalidades de CRUD de pré fornecedores e contatos")
+                        .description("API Rest da aplicação PreSupplier, contendo as funcionalidades de CRUD de Clientes e Produtos")
                         .contact(new Contact()
                                 .name("Time Backend")
                                 .email("adelmo2@gmail.com"))
