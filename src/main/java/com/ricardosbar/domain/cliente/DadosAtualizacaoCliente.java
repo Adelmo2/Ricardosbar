@@ -1,8 +1,9 @@
 package com.ricardosbar.domain.cliente;
 
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
 
-public record DadosDetalhamentoCliente(
+public record DadosAtualizacaoCliente(
+        @NotNull
         Long id,
         String nome,
         String telefone,
@@ -10,18 +11,11 @@ public record DadosDetalhamentoCliente(
         String bairro,
         String cidade,
         String uf,
-        String valor_ult_pagto,
-        LocalDateTime dt_ult_pago,
-        String hora_ult_pago,
-        Double saldo_pagar,
-        LocalDateTime primeira_compra,
         Double limite,
-        Boolean bloqueado,
         String observacao,
-        String email
-)
+        String email)
 {
-    public DadosDetalhamentoCliente(Cliente cliente) {
+    public DadosAtualizacaoCliente(Cliente cliente) {
         this(cliente.getId(),
                 cliente.getNome(),
                 cliente.getTelefone(),
@@ -29,13 +23,7 @@ public record DadosDetalhamentoCliente(
                 cliente.getBairro(),
                 cliente.getCidade(),
                 cliente.getUf(),
-                cliente.getValor_ult_pagto(),
-                cliente.getDt_ult_pago(),
-                cliente.getHora_ult_pago(),
-                cliente.getSaldo_pagar(),
-                cliente.getPrimeira_compra(),
                 cliente.getLimite(),
-                cliente.getBloqueado(),
                 cliente.getObservacao(),
                 cliente.getEmail()
         );

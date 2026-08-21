@@ -54,6 +54,37 @@ public class Cliente {
         this.email = dados.email();
     }
 
+    public void atualizarInformacoes(DadosAtualizacaoCliente dados) {
+        if (dados.nome() != null) {
+            this.nome = dados.nome();
+        }
+        if (dados.telefone() != null) {
+            this.telefone = dados.telefone();
+        }
+        if (dados.endereco() != null) {
+            this.endereco = dados.endereco();
+        }
+        if (dados.bairro() != null) {
+            this.bairro = dados.bairro();
+        }
+        if (dados.cidade() != null) {
+            this.cidade = dados.cidade();
+        }
+        if (dados.uf() != null) {
+            this.uf = dados.uf();
+        }
+        if (dados.observacao() != null) {
+            this.observacao = dados.observacao();
+        }
+        if (dados.email() != null) {
+            this.email = dados.email();
+        }
+        if (dados.limite() > 0) {
+            this.limite = dados.limite();
+        }
+
+    }
+
     public void excluir() {
         this.bloqueado = true;
     }
