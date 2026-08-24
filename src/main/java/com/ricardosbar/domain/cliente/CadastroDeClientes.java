@@ -12,23 +12,26 @@ public class CadastroDeClientes {
 
     public DadosDetalhamentoCliente cadastrar(DadosCadastroCliente dados) {
 
-        if (dados.nome().isEmpty()) {
-            throw new validacaoException("O nome do cliente é obrigatório!!");
-        }
+        var validaCadastro = new ValidaCadastroCliente();
+        validaCadastro.ValidaCliente(dados, false);
 
-        var temCliente = clienteRepository.clienteDuplicado(dados.nome());
-        if (temCliente != null) {
-            throw new validacaoException("Cliente já cadastrado!");
-        }
-
-        if (!dados.email().isEmpty()) {
-            if (!dados.email().contains("@")) {
-                throw new validacaoException("Email inválido!!");
-            }
-            if (!dados.email().contains(".")) {
-                throw new validacaoException("Email inválido!");
-            }
-        }
+//        if (dados.nome().isEmpty()) {
+//            throw new validacaoException("O nome do cliente é obrigatório!!");
+//        }
+//
+//        var temCliente = clienteRepository.clienteDuplicado(dados.nome());
+//        if (temCliente != null) {
+//            throw new validacaoException("Cliente já cadastrado!");
+//        }
+//
+//        if (!dados.email().isEmpty()) {
+//            if (!dados.email().contains("@")) {
+//                throw new validacaoException("Email inválido!!");
+//            }
+//            if (!dados.email().contains(".")) {
+//                throw new validacaoException("Email inválido!");
+//            }
+//        }
 
         var cliente = new Cliente(
                 null,

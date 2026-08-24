@@ -35,8 +35,8 @@ public class Cliente {
     private String observacao;
     private String email;
 
-
     public Cliente(DadosCadastroCliente dados) {
+
         this.nome = dados.nome();
         this.telefone = dados.telefone();
         this.endereco = dados.endereco();
@@ -55,6 +55,10 @@ public class Cliente {
     }
 
     public void atualizarInformacoes(DadosAtualizacaoCliente dados) {
+
+        //var validaCadastro = new ValidaCadastroCliente();
+        //validaCadastro.ValidaCliente(dados, false);
+
         if (dados.nome() != null) {
             this.nome = dados.nome();
         }
@@ -76,13 +80,15 @@ public class Cliente {
         if (dados.observacao() != null) {
             this.observacao = dados.observacao();
         }
-        if (dados.email() != null) {
-            this.email = dados.email();
-        }
+//        if (dados.email() != null) {
+//            if (!dados.email().contains("@")) {
+//                throw new validacaoException("E-mail inválido!");
+//            }
+//            this.email = dados.email();
+//        }
         if (dados.limite() > 0) {
             this.limite = dados.limite();
         }
-
     }
 
     public void excluir() {
@@ -92,5 +98,4 @@ public class Cliente {
     public void ativar() {
         this.bloqueado = false;
     }
-
 }

@@ -76,10 +76,10 @@ public class ClienteController {
 
     @PutMapping
     @Transactional
+    @RequestMapping("/alterar")
     public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoCliente dados) {
         var cliente =  clienteRepository.getReferenceById(dados.id());
         cliente.atualizarInformacoes(dados);
-        //return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
         return ResponseEntity.ok(new DadosAtualizacaoCliente(cliente));
     }
 
