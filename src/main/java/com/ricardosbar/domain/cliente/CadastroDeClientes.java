@@ -1,6 +1,5 @@
 package com.ricardosbar.domain.cliente;
 
-import com.ricardosbar.domain.validacaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,25 +12,8 @@ public class CadastroDeClientes {
     public DadosDetalhamentoCliente cadastrar(DadosCadastroCliente dados) {
 
         var validaCadastro = new ValidaCadastroCliente();
-        validaCadastro.ValidaCliente(dados, false);
-
-//        if (dados.nome().isEmpty()) {
-//            throw new validacaoException("O nome do cliente é obrigatório!!");
-//        }
-//
-//        var temCliente = clienteRepository.clienteDuplicado(dados.nome());
-//        if (temCliente != null) {
-//            throw new validacaoException("Cliente já cadastrado!");
-//        }
-//
-//        if (!dados.email().isEmpty()) {
-//            if (!dados.email().contains("@")) {
-//                throw new validacaoException("Email inválido!!");
-//            }
-//            if (!dados.email().contains(".")) {
-//                throw new validacaoException("Email inválido!");
-//            }
-//        }
+        String nomeExistente = clienteRepository.clienteDuplicado(dados.nome());
+        validaCadastro.ValidaCliente(dados, false, nomeExistente);
 
         var cliente = new Cliente(
                 null,

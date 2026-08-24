@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 public record DadosCadastroCliente(
+        Long id,
         //@NotBlank(message = "Nome é Obrigatório...")
         String nome,
 

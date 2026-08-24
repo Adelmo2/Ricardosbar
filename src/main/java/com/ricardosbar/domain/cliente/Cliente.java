@@ -54,10 +54,11 @@ public class Cliente {
         this.email = dados.email();
     }
 
-    public void atualizarInformacoes(DadosAtualizacaoCliente dados) {
+    //public void atualizarInformacoes(DadosAtualizacaoCliente dados) {
+    public void atualizarInformacoes(DadosCadastroCliente dados) {
 
-        //var validaCadastro = new ValidaCadastroCliente();
-        //validaCadastro.ValidaCliente(dados, false);
+        var validaCadastro = new ValidaCadastroCliente();
+        validaCadastro.ValidaCliente(dados, true, null);
 
         if (dados.nome() != null) {
             this.nome = dados.nome();
@@ -80,12 +81,9 @@ public class Cliente {
         if (dados.observacao() != null) {
             this.observacao = dados.observacao();
         }
-//        if (dados.email() != null) {
-//            if (!dados.email().contains("@")) {
-//                throw new validacaoException("E-mail inválido!");
-//            }
-//            this.email = dados.email();
-//        }
+        if (dados.email() != null) {
+            this.email = dados.email();
+        }
         if (dados.limite() > 0) {
             this.limite = dados.limite();
         }
