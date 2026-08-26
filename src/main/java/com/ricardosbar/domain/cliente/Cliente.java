@@ -1,5 +1,6 @@
 package com.ricardosbar.domain.cliente;
 
+import com.ricardosbar.domain.validacaoException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -54,11 +55,33 @@ public class Cliente {
         this.email = dados.email();
     }
 
-    //public void atualizarInformacoes(DadosAtualizacaoCliente dados) {
-    public void atualizarInformacoes(DadosCadastroCliente dados) {
+    public void atualizarCadastroCliente(DadosAtualizacaoCliente dados) {
+    //public void atualizarInformacoes(DadosCadastroCliente dados) {
 
-        var validaCadastro = new ValidaCadastroCliente();
-        validaCadastro.ValidaCliente(dados, true, null);
+        //asr
+        //var validaCadastro = new ValidaCadastroCliente();
+        //validaCadastro.ValidaCliente(dados, true, null);
+        //validaCadastro.ValidaAlteracaoCliente(dados);
+
+
+        //if (nomeExistente != null) {
+        //    var mensagem = ("O Cliente " + dados.nome() + " Já esta cadastrado em outro registro!");
+        //    throw new validacaoException("Nome Cliente o cliente possui já cadastrado!...");
+        //}
+
+//        if (dados.nome().isEmpty()) {
+//            throw new validacaoException("O nome do cliente é obrigatório!..");
+//        }
+//
+//
+//        if (!dados.email().isEmpty()) {
+//            if (!dados.email().contains("@")) {
+//                throw new validacaoException("Email inválido!...");
+//            }
+//            if (!dados.email().contains(".")) {
+//                throw new validacaoException("Email inválido!...");
+//            }
+//        }
 
         if (dados.nome() != null) {
             this.nome = dados.nome();

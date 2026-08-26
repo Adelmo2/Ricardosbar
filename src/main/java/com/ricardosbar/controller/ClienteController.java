@@ -77,10 +77,16 @@ public class ClienteController {
     @PutMapping
     @Transactional
     @RequestMapping("/alterar")
-    //public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoCliente dados) {
-    public ResponseEntity atualizar(@RequestBody @Valid DadosCadastroCliente dados) {
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoCliente dados) {
+    //public ResponseEntity atualizar(@RequestBody @Valid DadosCadastroCliente dados) {
         var cliente =  clienteRepository.getReferenceById(dados.id());
-        cliente.atualizarInformacoes(dados);
+
+        //String nomeExistente = clienteRepository.clienteDuplicado(dados.nome());
+        var valildaCadastro = new ValidaCadastroCliente();
+        valildaCadastro.ValidaAlteracaoCliente(dados, clienteRepository);
+        //validaCadastro.ValidaNovoCliente(dados, nomeExistente);
+
+        cliente.atualizarCadastroCliente(dados);
         return ResponseEntity.ok(new DadosAtualizacaoCliente(cliente));
     }
 

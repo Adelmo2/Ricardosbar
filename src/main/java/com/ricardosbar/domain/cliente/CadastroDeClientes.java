@@ -12,8 +12,9 @@ public class CadastroDeClientes {
     public DadosDetalhamentoCliente cadastrar(DadosCadastroCliente dados) {
 
         var validaCadastro = new ValidaCadastroCliente();
-        String nomeExistente = clienteRepository.clienteDuplicado(dados.nome());
-        validaCadastro.ValidaCliente(dados, false, nomeExistente);
+        //String nomeExistente = clienteRepository.clienteDuplicado(dados.nome());
+        //validaCadastro.ValidaNovoCliente(dados, nomeExistente);
+        validaCadastro.ValidaNovoCliente(dados, clienteRepository);
 
         var cliente = new Cliente(
                 null,
