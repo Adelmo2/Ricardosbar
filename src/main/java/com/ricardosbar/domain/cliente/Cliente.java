@@ -38,7 +38,7 @@ public class Cliente {
 
     public Cliente(DadosCadastroCliente dados) {
 
-        this.nome = dados.nome();
+        this.nome = dados.nome().toUpperCase();
         this.telefone = dados.telefone();
         this.endereco = dados.endereco();
         this.bairro = dados.bairro();
@@ -56,35 +56,9 @@ public class Cliente {
     }
 
     public void atualizarCadastroCliente(DadosAtualizacaoCliente dados) {
-    //public void atualizarInformacoes(DadosCadastroCliente dados) {
-
-        //asr
-        //var validaCadastro = new ValidaCadastroCliente();
-        //validaCadastro.ValidaCliente(dados, true, null);
-        //validaCadastro.ValidaAlteracaoCliente(dados);
-
-
-        //if (nomeExistente != null) {
-        //    var mensagem = ("O Cliente " + dados.nome() + " Já esta cadastrado em outro registro!");
-        //    throw new validacaoException("Nome Cliente o cliente possui já cadastrado!...");
-        //}
-
-//        if (dados.nome().isEmpty()) {
-//            throw new validacaoException("O nome do cliente é obrigatório!..");
-//        }
-//
-//
-//        if (!dados.email().isEmpty()) {
-//            if (!dados.email().contains("@")) {
-//                throw new validacaoException("Email inválido!...");
-//            }
-//            if (!dados.email().contains(".")) {
-//                throw new validacaoException("Email inválido!...");
-//            }
-//        }
 
         if (dados.nome() != null) {
-            this.nome = dados.nome();
+            this.nome = dados.nome().toUpperCase();
         }
         if (dados.telefone() != null) {
             this.telefone = dados.telefone();

@@ -13,6 +13,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
             from Cliente c
             where
             c.nome = :nomeCliente
+            and c.id <> :id
             """)
-    String clienteDuplicado(String nomeCliente);
+    String clienteDuplicado(String nomeCliente, Long id);
 }

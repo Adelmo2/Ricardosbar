@@ -58,6 +58,12 @@ public class ClienteController {
         return ResponseEntity.ok(new SaldoCliente(cliente));
     }
 
+    @GetMapping("/consultarcliente/{id}")
+    public ResponseEntity consultarCliente(@PathVariable Long id) {
+        var cliente = clienteRepository.getReferenceById(id);
+        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+    }
+
     @DeleteMapping("/inativar/{id}")
     @org.springframework.transaction.annotation.Transactional
     public ResponseEntity excluir(@PathVariable Long id) {
@@ -78,13 +84,9 @@ public class ClienteController {
     @Transactional
     @RequestMapping("/alterar")
     public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoCliente dados) {
-    //public ResponseEntity atualizar(@RequestBody @Valid DadosCadastroCliente dados) {
         var cliente =  clienteRepository.getReferenceById(dados.id());
-
-        //String nomeExistente = clienteRepository.clienteDuplicado(dados.nome());
         var valildaCadastro = new ValidaCadastroCliente();
         valildaCadastro.ValidaAlteracaoCliente(dados, clienteRepository);
-        //validaCadastro.ValidaNovoCliente(dados, nomeExistente);
 
         cliente.atualizarCadastroCliente(dados);
         return ResponseEntity.ok(new DadosAtualizacaoCliente(cliente));
