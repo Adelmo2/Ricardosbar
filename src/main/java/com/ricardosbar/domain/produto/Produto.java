@@ -1,5 +1,6 @@
 package com.ricardosbar.domain.produto;
 
+import com.ricardosbar.domain.cliente.DadosCadastroCliente;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,4 +22,11 @@ public class Produto {
     private Double preco;
     private Boolean casco;
     private Boolean bloqueado;
+
+    public Produto(DadosCadastroProduto dados) {
+        this.descricao = dados.descricao().toUpperCase();
+        this.preco = dados.preco();
+        this.casco = dados.casco();
+        this.bloqueado = dados.bloqueado();
+    }
 }

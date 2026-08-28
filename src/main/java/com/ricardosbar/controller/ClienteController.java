@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -32,12 +31,16 @@ public class ClienteController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("listarapi")
-    public ResponseEntity listarClientes(@RequestBody @Valid DadosCadastroCliente dados) {
-        System.out.println("* * * * * dados: " + dados);
-        System.out.println("Nome: " + dados.nome() + " Telefone: " + dados.telefone() + " Cidade:" + dados.cidade() + " UF:" + dados.uf());
-        var cliente = new Cliente(dados);
-        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+    @PutMapping
+    @Transactional
+    @RequestMapping("/alterar")
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoCliente dados) {
+        var cliente =  clienteRepository.getReferenceById(dados.id());
+        var valildaCadastro = new ValidaCadastroCliente();
+        valildaCadastro.ValidaAlteracaoCliente(dados, clienteRepository);
+
+        cliente.atualizarCadastroCliente(dados);
+        return ResponseEntity.ok(new DadosAtualizacaoCliente(cliente));
     }
 
     @GetMapping
@@ -80,16 +83,12 @@ public class ClienteController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping
-    @Transactional
-    @RequestMapping("/alterar")
-    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoCliente dados) {
-        var cliente =  clienteRepository.getReferenceById(dados.id());
-        var valildaCadastro = new ValidaCadastroCliente();
-        valildaCadastro.ValidaAlteracaoCliente(dados, clienteRepository);
-
-        cliente.atualizarCadastroCliente(dados);
-        return ResponseEntity.ok(new DadosAtualizacaoCliente(cliente));
+    @GetMapping("listarapi")
+    public ResponseEntity listarClientes(@RequestBody @Valid DadosCadastroCliente dados) {
+        System.out.println("* * * * * dados: " + dados);
+        System.out.println("Nome: " + dados.nome() + " Telefone: " + dados.telefone() + " Cidade:" + dados.cidade() + " UF:" + dados.uf());
+        var cliente = new Cliente(dados);
+        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
     }
 
 }
