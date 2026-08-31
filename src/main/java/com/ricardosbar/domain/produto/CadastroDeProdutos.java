@@ -19,8 +19,8 @@ public class CadastroDeProdutos {
                 null,
                 dados.descricao(),
                 dados.preco(),
-                dados.bloqueado(),
-                dados.casco()
+                dados.casco(),
+                dados.bloqueado()
         );
         produtoRepository.save(produto);
         //return new DadosDetalhamentoProduto(produto);

@@ -37,4 +37,16 @@ public class ProdutoController {
         var dto = cadastroDeProdutos.cadastrar(dados);
         return ResponseEntity.ok(dto);
     }
+
+    @PutMapping
+    @Transactional
+    @RequestMapping("/alterar")
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoProduto dados) {
+        var produto = produtoRepository.getReferenceById(dados.id());
+        var validaCadastro = new ValidaCadastroProduto();
+        validaCadastro.ValidaAlteracaoProduto(dados, produtoRepository);
+
+        produto.atualizarCadastroProduto(dados);
+        return new ResponseEntity.ok(new DadosAtualizacaoProduto(produto));
+    }
 }

@@ -1,6 +1,8 @@
 package com.ricardosbar.domain.produto;
 
+import com.ricardosbar.domain.cliente.DadosAtualizacaoCliente;
 import com.ricardosbar.domain.validacaoException;
+import jakarta.validation.Valid;
 
 public class ValidaCadastroProduto {
 
@@ -20,7 +22,8 @@ public class ValidaCadastroProduto {
         }
     }
 
-    public void ValidaAlteracaoProduto(DadosCadastroProduto dados, ProdutoRepository produtoRepository) {
+    //public void ValidaAlteracaoProduto(@Valid @org.jetbrains.annotations.UnknownNullability DadosAtualizacaoProduto dados, ProdutoRepository produtoRepository) {
+    public void ValidaAlteracaoProduto(DadosAtualizacaoProduto dados, ProdutoRepository produtoRepository) {
 
         String produtoExistente = produtoRepository.produtoDuplicado(dados.descricao(), dados.id());
         if (produtoExistente != null) {
