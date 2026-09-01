@@ -1,7 +1,5 @@
 package com.ricardosbar.controller;
 
-import com.ricardosbar.domain.cliente.CadastroDeClientes;
-import com.ricardosbar.domain.cliente.DadosCadastroCliente;
 import com.ricardosbar.domain.produto.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -47,6 +45,6 @@ public class ProdutoController {
         validaCadastro.ValidaAlteracaoProduto(dados, produtoRepository);
 
         produto.atualizarCadastroProduto(dados);
-        return new ResponseEntity.ok(new DadosAtualizacaoProduto(produto));
+        return ResponseEntity.ok(new DadosAtualizacaoProduto(produto));
     }
 }

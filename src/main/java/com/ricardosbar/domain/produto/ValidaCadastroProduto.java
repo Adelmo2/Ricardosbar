@@ -1,8 +1,6 @@
 package com.ricardosbar.domain.produto;
 
-import com.ricardosbar.domain.cliente.DadosAtualizacaoCliente;
 import com.ricardosbar.domain.validacaoException;
-import jakarta.validation.Valid;
 
 public class ValidaCadastroProduto {
 
@@ -30,9 +28,9 @@ public class ValidaCadastroProduto {
             throw new validacaoException("Produto já cadastrado!...");
         }
 
-        if (dados.descricao().isEmpty()) {
-            throw new validacaoException("A descrição do produto é obrigatória!..");
-        }
+        //if (dados.descricao().isEmpty()) {
+        //    throw new validacaoException("A descrição do produto é obrigatória!..");
+        //}
 
         if (dados.preco() < 0) {
             throw new validacaoException("Preço inválido!...");
