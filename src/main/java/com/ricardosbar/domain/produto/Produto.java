@@ -45,4 +45,13 @@ public class Produto {
             this.bloqueado = dados.bloqueado();
         }
     }
+
+    public void inativar() {
+        this.bloqueado = true;
+    }
+
+    public void ativar() {
+        this.bloqueado = false;
+    }
+
 }
