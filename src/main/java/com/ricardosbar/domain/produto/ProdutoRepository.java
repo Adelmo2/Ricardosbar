@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ProdutoRepository  extends JpaRepository<Produto, Long> {
     Page<Produto> findAllByBloqueadoFalse(Pageable paginacao);
     Page<Produto> findAllByBloqueadoTrue(Pageable paginacao);
@@ -18,6 +20,8 @@ public interface ProdutoRepository  extends JpaRepository<Produto, Long> {
             and p.id <> :id
             """)
     String produtoDuplicado(String descricaoProduto, Long id);
+
+    List<Produto> findAllByDescricaoContainingIgnoreCase(String descricao);
 
     //Boolean findByBloqueadoFalse();
 }

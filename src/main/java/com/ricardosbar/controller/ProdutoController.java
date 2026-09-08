@@ -89,4 +89,21 @@ public class ProdutoController {
         return ResponseEntity.ok(page);
     }
 
+    @GetMapping("/consultar/{id}")
+    public ResponseEntity consultarProduto(@PathVariable Long id) {
+        var produto = produtoRepository.getReferenceById(id);
+        return ResponseEntity.ok(new DadosDetalhamentoProduto(produto));
+    }
+
+    @GetMapping("/pesquisarnomeproduto/{nomeProduto}")
+    public ResponseEntity<List<DadosDetalhamentoProduto>> pesquisarNomeProduto(@PathVariable String nomeProduto) {
+
+        List<Produto> produtos = produtoRepository.findAllByDescricaoContainingIgnoreCase(nomeProduto);
+
+        List<DadosDetalhamentoProduto> retorno = produtos.stream()
+                .map(DadosDetalhamentoProduto::new)
+                .toList();
+        System.out.println(retorno);
+        return ResponseEntity.ok(retorno);
+    }
 }
