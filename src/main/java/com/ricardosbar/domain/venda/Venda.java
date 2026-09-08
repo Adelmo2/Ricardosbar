@@ -30,11 +30,23 @@ public class Venda {
     @JoinColumn(name = "id_produtos")
     private Produto produto;
 
-    private int quantidade;
+    private Double quantidade;
     private LocalDateTime data_pagamento;
     private String hora_pagamento;
     private Double valor;
     private Double total;
     private Boolean cupom;
     private Boolean pago;
+
+    public Venda(Cliente cliente, Produto produto, Double quantidade, Double valor, Boolean cupom, Boolean pago) {
+        this.cliente = cliente;
+        this.produto = produto;
+        this.quantidade = quantidade;
+        this.data_pagamento = LocalDateTime.now();
+        this.hora_pagamento = "";
+        this.valor = valor;
+        this.total = (quantidade * valor);
+        this.cupom = cupom;
+        this.pago = pago;
+    }
 }
