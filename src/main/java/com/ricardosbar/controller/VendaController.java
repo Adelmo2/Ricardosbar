@@ -31,7 +31,6 @@ public class VendaController {
         System.out.println("******DADOS****");
         System.out.println(dados);
         var dto = cadastroDeVendas.cadastrarVenda(dados);
-        //return ResponseEntity.ok(new DadosDetalhamentoConsulta(null, null, null, null));
         return ResponseEntity.ok(dto);
     }
 }

@@ -93,4 +93,12 @@ public class Cliente {
     public void ativar() {
         this.bloqueado = false;
     }
+
+    public void atualizaSaldo(Double valor, String operacao) {
+        if (operacao.equals("+")) {
+            this.saldo_pagar += valor;
+        } else if (operacao.equals("-")) {
+            this.saldo_pagar -= valor;
+        }
+    }
 }

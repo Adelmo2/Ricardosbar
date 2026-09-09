@@ -35,7 +35,17 @@ public class CadastroDeVendas {
         var cliente =  clienteRepository.getReferenceById(dados.id_clientes());
         var produto =  produtoRepository.getReferenceById(dados.id_produtos());
 
+        if (produto.getBloqueado() == true) {
+            throw new validacaoException("Produto bloqueado!");
+        }
+
+        if (cliente.getBloqueado() == true) {
+            throw new validacaoException("Cliente bloqueado!");
+        }
+
         var venda = new Venda(cliente, produto, dados.quantidade(), dados.valor(), dados.cupom(), dados.pago());
+
+        cliente.atualizaSaldo(dados.valor(), "+");
 
         vendaRepository.save(venda);
 
