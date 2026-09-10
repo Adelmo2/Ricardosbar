@@ -1,7 +1,5 @@
 package com.ricardosbar.domain.venda;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 
 public record DadosDetalhamentoConsulta(

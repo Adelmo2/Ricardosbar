@@ -1,11 +1,11 @@
 package com.ricardosbar.domain.cliente;
 
-import com.ricardosbar.domain.validacaoException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Table(name = "clientes")

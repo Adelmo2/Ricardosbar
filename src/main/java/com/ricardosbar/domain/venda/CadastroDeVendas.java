@@ -1,15 +1,10 @@
 package com.ricardosbar.domain.venda;
 
-//import com.ricardosbar.domain.ValidacaoException;
 import com.ricardosbar.domain.cliente.ClienteRepository;
 import com.ricardosbar.domain.produto.ProdutoRepository;
 import com.ricardosbar.domain.validacaoException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 public class CadastroDeVendas {
@@ -45,11 +40,17 @@ public class CadastroDeVendas {
 
         var venda = new Venda(cliente, produto, dados.quantidade(), dados.valor(), dados.cupom(), dados.pago());
 
-        cliente.atualizaSaldo(dados.valor(), "+");
+        cliente.atualizaSaldo((dados.valor() * dados.quantidade()), "+");
 
         vendaRepository.save(venda);
 
         return new DadosDetalhamentoConsulta(venda);
+    }
 
+    public void excluir(Long id) {
+        var venda = vendaRepository.getReferenceById(id);
+        var cliente =  clienteRepository.getReferenceById(venda.getCliente().getId());
+        cliente.atualizaSaldo(venda.getTotal(), "-");
+        vendaRepository.deleteById(id);
     }
 }
