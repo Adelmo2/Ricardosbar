@@ -2,7 +2,7 @@ package com.ricardosbar.domain.venda;
 
 import java.time.LocalDateTime;
 
-public record DadosDetalhamentoConsulta(
+public record DadosDetalhamentoVenda(
         Long id,
         Long id_produtos,
         Long id_clientes,
@@ -14,7 +14,7 @@ public record DadosDetalhamentoConsulta(
         Boolean cupom,
         Boolean pago
 ) {
-    public DadosDetalhamentoConsulta(Venda venda) {
+    public DadosDetalhamentoVenda(Venda venda) {
         this(
             venda.getId(),
             venda.getCliente().getId(),

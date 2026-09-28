@@ -10,7 +10,7 @@ public record DadosDetalhamentoCliente(
         String bairro,
         String cidade,
         String uf,
-        String valor_ult_pagto,
+        Double valor_ult_pagto,
         LocalDateTime dt_ult_pago,
         String hora_ult_pago,
         Double saldo_pagar,

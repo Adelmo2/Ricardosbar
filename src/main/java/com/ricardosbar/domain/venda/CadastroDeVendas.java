@@ -6,6 +6,7 @@ import com.ricardosbar.domain.validacaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class CadastroDeVendas {
 
@@ -18,7 +19,7 @@ public class CadastroDeVendas {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public DadosDetalhamentoConsulta cadastrarVenda(DadosCadastroVenda dados) {
+    public DadosDetalhamentoVenda cadastrarVenda(DadosCadastroVenda dados) {
         if (!clienteRepository.existsById(dados.id_clientes())) {
             throw new validacaoException("Id do paciente informado não existe!");
         }
@@ -34,17 +35,28 @@ public class CadastroDeVendas {
             throw new validacaoException("Produto bloqueado!");
         }
 
-        if (cliente.getBloqueado() == true) {
+        if (cliente.getBloqueado() == true && produto.getId() != 1) {
             throw new validacaoException("Cliente bloqueado!");
+        }
+
+        if (produto.getId() != 1) {
+            if (dados.quantidade() == 0) {
+                throw new validacaoException("Informe a quantidade!");
+            }
+            if (dados.valor() == 0) {
+                throw new validacaoException("Informe o valor!");
+            }
         }
 
         var venda = new Venda(cliente, produto, dados.quantidade(), dados.valor(), dados.cupom(), dados.pago());
 
-        cliente.atualizaSaldo((dados.valor() * dados.quantidade()), "+");
-
+        if (produto.getId() == 1) {
+            cliente.atualizaSaldo((dados.valor()), "-");
+        } else {
+            cliente.atualizaSaldo((dados.valor() * dados.quantidade()), "+");
+        }
         vendaRepository.save(venda);
-
-        return new DadosDetalhamentoConsulta(venda);
+        return new DadosDetalhamentoVenda(venda);
     }
 
     public void excluir(Long id) {

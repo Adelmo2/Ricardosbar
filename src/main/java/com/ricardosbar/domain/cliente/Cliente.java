@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Table(name = "clientes")
@@ -26,7 +25,7 @@ public class Cliente {
     private String bairro;
     private String cidade;
     private String uf;
-    private String valor_ult_pagto;
+    private Double valor_ult_pagto;
     private LocalDateTime dt_ult_pago;
     private String hora_ult_pago;
     private Double saldo_pagar;
@@ -99,6 +98,13 @@ public class Cliente {
             this.saldo_pagar += valor;
         } else if (operacao.equals("-")) {
             this.saldo_pagar -= valor;
+        }
+        if (this.primeira_compra == null && operacao.equals("+")) {
+            this.primeira_compra = LocalDateTime.now();
+        }
+        if (operacao.equals("-") && valor > 0) {
+            this.dt_ult_pago = LocalDateTime.now();
+            this.valor_ult_pagto = valor;
         }
     }
 }

@@ -1,8 +1,9 @@
 package com.ricardosbar.controller;
 
+import com.ricardosbar.domain.cliente.ClienteRepository;
 import com.ricardosbar.domain.venda.CadastroDeVendas;
 import com.ricardosbar.domain.venda.DadosCadastroVenda;
-import com.ricardosbar.domain.venda.VendaRepository;
+import com.ricardosbar.domain.venda.DadosDetalhamentoVendaCliente;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.*;
 public class VendaController {
 
     @Autowired
-    private VendaRepository vendaRepository;
+    private CadastroDeVendas cadastroDeVendas;
 
     @Autowired
-    private CadastroDeVendas cadastroDeVendas;
+    private ClienteRepository clienteRepository;
+
+    @Autowired
+    private DadosDetalhamentoVendaCliente dadosDetalhamentoVendaCliente;
 
     @PostMapping
     @Transactional
@@ -34,10 +38,21 @@ public class VendaController {
     @DeleteMapping("/excluir/{id}")
     @Transactional
     public ResponseEntity excluir(@PathVariable Long id) {
-        //var produto = produtoRepository.getReferenceById(id);
-        //produto.inativar();
         cadastroDeVendas.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
+//    @GetMapping("/consultarvendascliente/{id}")
+//    public ResponseEntity consultarVendaCliente(@PathVariable Long id) {
+//        dadosDetalhamentoVendaCliente.listaVendaDoCliente(id);
+//        return ResponseEntity.ok(new DadosDetalhamentoVendaCliente().listaVendaDoCliente(id));
+//    }
+
+    @GetMapping("/consultarvendascliente/{id}")
+    //public ResponseEntity<List<DadosDetalhamentoVendaDto>> consultarVendaCliente(@PathVariable Long id) {
+    public ResponseEntity consultarVendaCliente(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                dadosDetalhamentoVendaCliente.listaVendaDoCliente(id)
+        );
+    }
 }
