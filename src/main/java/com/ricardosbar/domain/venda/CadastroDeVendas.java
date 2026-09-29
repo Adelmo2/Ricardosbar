@@ -21,7 +21,7 @@ public class CadastroDeVendas {
 
     public DadosDetalhamentoVenda cadastrarVenda(DadosCadastroVenda dados) {
         if (!clienteRepository.existsById(dados.id_clientes())) {
-            throw new validacaoException("Id do paciente informado não existe!");
+            throw new validacaoException("Id do cliente informado não existe!");
         }
 
         if (!produtoRepository.existsById(dados.id_produtos())) {
