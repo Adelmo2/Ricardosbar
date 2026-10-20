@@ -1,11 +1,11 @@
-package com.ricardosbar.domain.cliente;
+package com.ricardosbar.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
-public record DadosCadastroCliente(
+public record DadosCadastroClienteDto(
         Long id,
         //@NotBlank(message = "Nome é Obrigatório...")
         String nome,

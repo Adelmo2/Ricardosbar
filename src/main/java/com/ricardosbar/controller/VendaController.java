@@ -1,9 +1,9 @@
 package com.ricardosbar.controller;
 
-import com.ricardosbar.domain.cliente.ClienteRepository;
-import com.ricardosbar.domain.venda.CadastroDeVendas;
-import com.ricardosbar.domain.venda.DadosCadastroVenda;
-import com.ricardosbar.domain.venda.DadosDetalhamentoVendas;
+import com.ricardosbar.repository.ClienteRepository;
+import com.ricardosbar.service.CadastroDeVendasService;
+import com.ricardosbar.domain.venda.DadosCadastroVendaDto;
+import com.ricardosbar.domain.venda.DadosDetalhamentoVendasService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -17,18 +17,18 @@ import org.springframework.web.bind.annotation.*;
 public class VendaController {
 
     @Autowired
-    private CadastroDeVendas cadastroDeVendas;
+    private CadastroDeVendasService cadastroDeVendas;
 
     @Autowired
     private ClienteRepository clienteRepository;
 
     @Autowired
-    private DadosDetalhamentoVendas dadosDetalhamentoVendas;
+    private DadosDetalhamentoVendasService dadosDetalhamentoVendasService;
 
     @PostMapping
     @Transactional
     @RequestMapping("/cadastrar")
-    public ResponseEntity cadastrarVenda(@RequestBody @Valid DadosCadastroVenda dados) {
+    public ResponseEntity cadastrarVenda(@RequestBody @Valid DadosCadastroVendaDto dados) {
         System.out.println("******DADOS****");
         System.out.println(dados);
         var dto = cadastroDeVendas.cadastrarVenda(dados);
@@ -44,13 +44,13 @@ public class VendaController {
 
     @GetMapping("/consultarvendascliente/{id}")
     public ResponseEntity consultarVendaCliente(@PathVariable Long id) {
-        return ResponseEntity.ok(dadosDetalhamentoVendas.listaVendaDoCliente(id)
+        return ResponseEntity.ok(dadosDetalhamentoVendasService.listaVendaDoCliente(id)
         );
     }
 
     @GetMapping("/consultarvendasproduto/{id}")
     public ResponseEntity consultarVendaProduto(@PathVariable Long id) {
-        return ResponseEntity.ok(dadosDetalhamentoVendas.listaVendaDoProduto(id)
+        return ResponseEntity.ok(dadosDetalhamentoVendasService.listaVendaDoProduto(id)
         );
     }
 }

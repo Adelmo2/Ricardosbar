@@ -1,18 +1,18 @@
 package com.ricardosbar.domain.venda;
 
-import com.ricardosbar.domain.cliente.ClienteRepository;
+import com.ricardosbar.repository.ClienteRepository;
 import com.ricardosbar.domain.produto.ProdutoRepository;
 import com.ricardosbar.domain.validacaoException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DadosDetalhamentoVendas {
+public class DadosDetalhamentoVendasService {
 
     private final VendaRepository vendaRepository;
     private final ClienteRepository clienteRepository;
     private final ProdutoRepository  produtoRepository;
-    public DadosDetalhamentoVendas(VendaRepository vendaRepository, ClienteRepository clienteRepository, ProdutoRepository produtoRepository) {
+    public DadosDetalhamentoVendasService(VendaRepository vendaRepository, ClienteRepository clienteRepository, ProdutoRepository produtoRepository) {
         this.vendaRepository = vendaRepository;
         this.clienteRepository = clienteRepository;
         this.produtoRepository = produtoRepository;
@@ -24,14 +24,14 @@ public class DadosDetalhamentoVendas {
 //                .toList();
 //    }
 
-    public List<DadosDetalhamentoVendaDto> listaVendaDoCliente(Long id) {
+    public List<DadosDetalhamentoVendaFullDto> listaVendaDoCliente(Long id) {
         if (!clienteRepository.existsById(id)) {
             throw new validacaoException("Id do cliente informado não existe!");
         }
         return  vendaRepository.vendasPorCliente(id);
     }
 
-    public List<DadosDetalhamentoVendaDto> listaVendaDoProduto(Long id) {
+    public List<DadosDetalhamentoVendaFullDto> listaVendaDoProduto(Long id) {
         if (!produtoRepository.existsById(id)) {
             throw new validacaoException("Id do produto informado não existe!");
         }

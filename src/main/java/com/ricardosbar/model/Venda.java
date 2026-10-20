@@ -1,6 +1,5 @@
-package com.ricardosbar.domain.venda;
+package com.ricardosbar.model;
 
-import com.ricardosbar.domain.cliente.Cliente;
 import com.ricardosbar.domain.produto.Produto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

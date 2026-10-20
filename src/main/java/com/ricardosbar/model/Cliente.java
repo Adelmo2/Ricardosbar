@@ -1,5 +1,7 @@
-package com.ricardosbar.domain.cliente;
+package com.ricardosbar.model;
 
+import com.ricardosbar.dto.DadosAtualizacaoClienteDto;
+import com.ricardosbar.dto.DadosCadastroClienteDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -35,7 +37,7 @@ public class Cliente {
     private String observacao;
     private String email;
 
-    public Cliente(DadosCadastroCliente dados) {
+    public Cliente(DadosCadastroClienteDto dados) {
 
         this.nome = dados.nome().toUpperCase();
         this.telefone = dados.telefone();
@@ -54,7 +56,7 @@ public class Cliente {
         this.email = dados.email();
     }
 
-    public void atualizarCadastroCliente(DadosAtualizacaoCliente dados) {
+    public void atualizarCadastroCliente(DadosAtualizacaoClienteDto dados) {
 
         if (dados.nome() != null) {
             this.nome = dados.nome().toUpperCase();

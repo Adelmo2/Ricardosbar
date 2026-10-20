@@ -1,6 +1,8 @@
-package com.ricardosbar.domain.cliente;
+package com.ricardosbar.dto;
 
-public record SaldoCliente(
+import com.ricardosbar.model.Cliente;
+
+public record SaldoClienteDto(
         Long id,
         String nome,
         String telefone,
@@ -8,7 +10,7 @@ public record SaldoCliente(
         Double saldo_pagar
 )
 {
-    public SaldoCliente(Cliente cliente) {
+    public SaldoClienteDto(Cliente cliente) {
         this(cliente.getId(),
                 cliente.getNome(),
                 cliente.getTelefone(),

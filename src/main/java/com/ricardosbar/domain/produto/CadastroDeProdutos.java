@@ -1,6 +1,5 @@
 package com.ricardosbar.domain.produto;
 
-import com.ricardosbar.domain.cliente.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

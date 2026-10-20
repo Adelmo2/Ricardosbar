@@ -1,8 +1,9 @@
-package com.ricardosbar.domain.cliente;
+package com.ricardosbar.dto;
 
+import com.ricardosbar.model.Cliente;
 import jakarta.validation.constraints.NotNull;
 
-public record DadosAtualizacaoCliente(
+public record DadosAtualizacaoClienteDto(
         @NotNull
         Long id,
         String nome,
@@ -15,7 +16,7 @@ public record DadosAtualizacaoCliente(
         String observacao,
         String email)
 {
-    public DadosAtualizacaoCliente(Cliente cliente) {
+    public DadosAtualizacaoClienteDto(Cliente cliente) {
         this(cliente.getId(),
                 cliente.getNome(),
                 cliente.getTelefone(),

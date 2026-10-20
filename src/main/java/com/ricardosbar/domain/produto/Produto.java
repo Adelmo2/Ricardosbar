@@ -1,6 +1,5 @@
 package com.ricardosbar.domain.produto;
 
-import com.ricardosbar.domain.cliente.DadosCadastroCliente;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

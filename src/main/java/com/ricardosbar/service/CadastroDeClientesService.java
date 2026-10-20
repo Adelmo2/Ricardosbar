@@ -1,15 +1,20 @@
-package com.ricardosbar.domain.cliente;
+package com.ricardosbar.service;
 
+import com.ricardosbar.repository.ClienteRepository;
+import com.ricardosbar.dto.DadosCadastroClienteDto;
+import com.ricardosbar.dto.DadosDetalhamentoClienteDto;
+import com.ricardosbar.validacoes.ValidaCadastroCliente;
+import com.ricardosbar.model.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CadastroDeClientes {
+public class CadastroDeClientesService {
 
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public DadosDetalhamentoCliente cadastrar(DadosCadastroCliente dados) {
+    public DadosDetalhamentoClienteDto cadastrar(DadosCadastroClienteDto dados) {
 
         var validaCadastro = new ValidaCadastroCliente();
         validaCadastro.ValidaNovoCliente(dados, clienteRepository);
@@ -33,6 +38,6 @@ public class CadastroDeClientes {
                 dados.email()
                 );
         clienteRepository.save(cliente);
-        return new DadosDetalhamentoCliente(cliente);
+        return new DadosDetalhamentoClienteDto(cliente);
     }
 }

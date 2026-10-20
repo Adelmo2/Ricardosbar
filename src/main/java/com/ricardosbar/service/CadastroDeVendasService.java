@@ -1,14 +1,18 @@
-package com.ricardosbar.domain.venda;
+package com.ricardosbar.service;
 
-import com.ricardosbar.domain.cliente.ClienteRepository;
+import com.ricardosbar.repository.ClienteRepository;
 import com.ricardosbar.domain.produto.ProdutoRepository;
 import com.ricardosbar.domain.validacaoException;
+import com.ricardosbar.domain.venda.DadosCadastroVendaDto;
+import com.ricardosbar.domain.venda.DadosDetalhamentoVendaDto;
+import com.ricardosbar.domain.venda.VendaRepository;
+import com.ricardosbar.model.Venda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
-public class CadastroDeVendas {
+public class CadastroDeVendasService {
 
     @Autowired
     private VendaRepository vendaRepository;
@@ -19,7 +23,7 @@ public class CadastroDeVendas {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public DadosDetalhamentoVenda cadastrarVenda(DadosCadastroVenda dados) {
+    public DadosDetalhamentoVendaDto cadastrarVenda(DadosCadastroVendaDto dados) {
         if (!clienteRepository.existsById(dados.id_clientes())) {
             throw new validacaoException("Id do cliente informado não existe!");
         }
@@ -56,7 +60,7 @@ public class CadastroDeVendas {
             cliente.atualizaSaldo((dados.valor() * dados.quantidade()), "+");
         }
         vendaRepository.save(venda);
-        return new DadosDetalhamentoVenda(venda);
+        return new DadosDetalhamentoVendaDto(venda);
     }
 
     public void excluir(Long id) {

@@ -1,6 +1,13 @@
 package com.ricardosbar.controller;
 
-import com.ricardosbar.domain.cliente.*;
+import com.ricardosbar.dto.DadosAtualizacaoClienteDto;
+import com.ricardosbar.dto.DadosCadastroClienteDto;
+import com.ricardosbar.dto.DadosDetalhamentoClienteDto;
+import com.ricardosbar.dto.SaldoClienteDto;
+import com.ricardosbar.model.Cliente;
+import com.ricardosbar.repository.ClienteRepository;
+import com.ricardosbar.service.CadastroDeClientesService;
+import com.ricardosbar.validacoes.ValidaCadastroCliente;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,12 +27,12 @@ public class ClienteController {
     private ClienteRepository clienteRepository;
 
     @Autowired
-    private CadastroDeClientes cadastroDeClientes;
+    private CadastroDeClientesService cadastroDeClientes;
 
     @PostMapping
     @Transactional
     @RequestMapping("/cadastrar")
-    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroCliente dados, UriComponentsBuilder uriBuilder){
+    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroClienteDto dados, UriComponentsBuilder uriBuilder){
         //clienteRepository.save(cliente);
         var dto = cadastroDeClientes.cadastrar(dados);
         return ResponseEntity.ok(dto);
@@ -34,13 +41,13 @@ public class ClienteController {
     @PutMapping
     @Transactional
     @RequestMapping("/alterar")
-    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoCliente dados) {
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoClienteDto dados) {
         var cliente =  clienteRepository.getReferenceById(dados.id());
         var valildaCadastro = new ValidaCadastroCliente();
         valildaCadastro.ValidaAlteracaoCliente(dados, clienteRepository);
 
         cliente.atualizarCadastroCliente(dados);
-        return ResponseEntity.ok(new DadosAtualizacaoCliente(cliente));
+        return ResponseEntity.ok(new DadosAtualizacaoClienteDto(cliente));
     }
 
     @GetMapping
@@ -52,19 +59,19 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ResponseEntity detalhar(@PathVariable Long id) {
         var cliente = clienteRepository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+        return ResponseEntity.ok(new DadosDetalhamentoClienteDto(cliente));
     }
 
     @GetMapping("/saldo/{id}")
     public ResponseEntity saldo(@PathVariable Long id) {
         var cliente = clienteRepository.getReferenceById(id);
-        return ResponseEntity.ok(new SaldoCliente(cliente));
+        return ResponseEntity.ok(new SaldoClienteDto(cliente));
     }
 
     @GetMapping("/consultarcliente/{id}")
     public ResponseEntity consultarCliente(@PathVariable Long id) {
         var cliente = clienteRepository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+        return ResponseEntity.ok(new DadosDetalhamentoClienteDto(cliente));
     }
 
     @DeleteMapping("/inativar/{id}")
@@ -84,11 +91,11 @@ public class ClienteController {
     }
 
     @GetMapping("listarapi")
-    public ResponseEntity listarClientes(@RequestBody @Valid DadosCadastroCliente dados) {
+    public ResponseEntity listarClientes(@RequestBody @Valid DadosCadastroClienteDto dados) {
         System.out.println("* * * * * dados: " + dados);
         System.out.println("Nome: " + dados.nome() + " Telefone: " + dados.telefone() + " Cidade:" + dados.cidade() + " UF:" + dados.uf());
         var cliente = new Cliente(dados);
-        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+        return ResponseEntity.ok(new DadosDetalhamentoClienteDto(cliente));
     }
 
 }

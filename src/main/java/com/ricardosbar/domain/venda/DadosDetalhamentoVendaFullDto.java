@@ -1,30 +1,36 @@
 package com.ricardosbar.domain.venda;
 
+import com.ricardosbar.model.Venda;
+
 import java.time.LocalDateTime;
 
-public record DadosDetalhamentoVenda(
+public record DadosDetalhamentoVendaFullDto(
         Long id,
-        Long id_produtos,
-        Long id_clientes,
+        Long id_cliente,
+        String nome_cliente,
+        Long id_produto,
+        String descricao_produto,
         Double quantidade,
         LocalDateTime data_pagamento,
-        String hora_pagamento,
         Double valor,
         Double total,
         Boolean cupom,
         Boolean pago
 ) {
-    public DadosDetalhamentoVenda(Venda venda) {
+
+    public DadosDetalhamentoVendaFullDto(Venda venda) {
         this(
             venda.getId(),
             venda.getCliente().getId(),
+            venda.getCliente().getNome(),
             venda.getProduto().getId(),
+            venda.getProduto().getDescricao(),
             venda.getQuantidade(),
             venda.getData_pagamento(),
-            venda.getHora_pagamento(),
             venda.getValor(),
             venda.getTotal(),
             venda.getCupom(),
-            venda.getPago());
+            venda.getPago()
+        );
     }
 }

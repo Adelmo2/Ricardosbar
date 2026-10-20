@@ -1,5 +1,6 @@
 package com.ricardosbar.domain.venda;
 
+import com.ricardosbar.model.Venda;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,16 +13,16 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
     Page<Venda> findAll(Pageable paginacao);
 
     @Query("""
-    SELECT new com.ricardosbar.domain.venda.DadosDetalhamentoVendaDto(v)
+    SELECT new com.ricardosbar.domain.venda.DadosDetalhamentoVendaFullDto(v)
     FROM Venda v
     WHERE v.cliente.id = :id
     """)
-    List<DadosDetalhamentoVendaDto> vendasPorCliente(@Param("id") Long id);
+    List<DadosDetalhamentoVendaFullDto> vendasPorCliente(@Param("id") Long id);
 
     @Query("""
-    SELECT new com.ricardosbar.domain.venda.DadosDetalhamentoVendaDto(v)
+    SELECT new com.ricardosbar.domain.venda.DadosDetalhamentoVendaFullDto(v)
     FROM Venda v
     WHERE v.produto.id = :id
     """)
-    List<DadosDetalhamentoVendaDto> vendasPorProduto(@Param("id") Long id);
+    List<DadosDetalhamentoVendaFullDto> vendasPorProduto(@Param("id") Long id);
 }

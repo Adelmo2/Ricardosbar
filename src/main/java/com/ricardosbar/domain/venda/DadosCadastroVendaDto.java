@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record DadosCadastroVenda(
+public record DadosCadastroVendaDto(
         @NotNull
         Long id_produtos,
 

@@ -1,8 +1,10 @@
-package com.ricardosbar.domain.cliente;
+package com.ricardosbar.dto;
+
+import com.ricardosbar.model.Cliente;
 
 import java.time.LocalDateTime;
 
-public record DadosDetalhamentoCliente(
+public record DadosDetalhamentoClienteDto(
         Long id,
         String nome,
         String telefone,
@@ -21,7 +23,7 @@ public record DadosDetalhamentoCliente(
         String email
 )
 {
-    public DadosDetalhamentoCliente(Cliente cliente) {
+    public DadosDetalhamentoClienteDto(Cliente cliente) {
         this(cliente.getId(),
                 cliente.getNome(),
                 cliente.getTelefone(),
