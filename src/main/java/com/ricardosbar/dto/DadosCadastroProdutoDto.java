@@ -4,7 +4,7 @@ public record DadosCadastroProdutoDto(
         Long id,
         String descricao,
         Double preco,
-        Boolean casco,
-        Boolean bloqueado
+        Integer casco,
+        Integer bloqueado
 ) {
 }

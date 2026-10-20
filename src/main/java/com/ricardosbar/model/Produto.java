@@ -22,8 +22,8 @@ public class Produto {
 
     private String descricao;
     private Double preco;
-    private Boolean casco;
-    private Boolean bloqueado;
+    private Integer casco;
+    private Integer bloqueado;
 
     public Produto(DadosCadastroProdutoDto dto) {
         this.descricao = dto.descricao().toUpperCase();
@@ -48,11 +48,11 @@ public class Produto {
     }
 
     public void inativar() {
-        this.bloqueado = true;
+        this.bloqueado = 1;
     }
 
     public void ativar() {
-        this.bloqueado = false;
+        this.bloqueado = 0;
     }
 
 }

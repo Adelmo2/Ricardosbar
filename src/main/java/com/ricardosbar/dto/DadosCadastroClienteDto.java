@@ -24,7 +24,7 @@ public record DadosCadastroClienteDto(
         Double saldo_pagar,
         LocalDateTime primeira_compra,
         Double limite,
-        Boolean bloqueado,
+        Integer bloqueado,
         String observacao,
         
         @Email(message = "Email inválido...")

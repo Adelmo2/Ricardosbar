@@ -1,22 +1,44 @@
-Create table clientes (    
-	
-	id bigint not null auto_increment,
+Create table clientes (
+--	id bigint not null auto_increment,
+--    nome varchar(40) not null,
+--    telefone varchar(15),
+--    endereco varchar(40),
+--    bairro varchar(40),
+--    cidade varchar(35),
+--    uf varchar(2),
+--    valor_ult_pagto decimal(12,2) ,
+--    dt_ult_pago datetime,
+--    hora_ult_pago varchar(8),
+--    saldo_pagar decimal(12,2) ,
+--    primeira_compra datetime,
+--    limite decimal(12,2),
+--    bloqueado tinyint,
+--    observacao varchar(150),
+--    email varchar(100),
+--	primary key(id)
 
-    nome varchar(40) not null,
-    telefone varchar(15),
-    endereco varchar(40),
-    bairro varchar(40),
-    cidade varchar(35),
-    uf varchar(2),
-    valor_ult_pagto decimal(12,2) ,
-    dt_ult_pago datetime,
-    hora_ult_pago varchar(8),
-    saldo_pagar decimal(12,2) ,
-    primeira_compra datetime,
-    limite decimal(12,2),
-    bloqueado tinyint,
-    observacao varchar(150),
-    email varchar(100),
+    id BIGSERIAL NOT NULL,
 
-	primary key(id)
+    nome VARCHAR(40) NOT NULL,
+    telefone VARCHAR(15),
+    endereco VARCHAR(40),
+    bairro VARCHAR(40),
+    cidade VARCHAR(35),
+    uf VARCHAR(2),
+
+    valor_ult_pagto NUMERIC(12,2),
+    dt_ult_pago TIMESTAMP,
+    hora_ult_pago VARCHAR(8),
+
+    saldo_pagar NUMERIC(12,2),
+    primeira_compra TIMESTAMP,
+    limite NUMERIC(12,2),
+
+    bloqueado SMALLINT DEFAULT 0,
+
+    observacao VARCHAR(150),
+    email VARCHAR(100),
+
+    CONSTRAINT pk_clientes PRIMARY KEY (id)
+
 );

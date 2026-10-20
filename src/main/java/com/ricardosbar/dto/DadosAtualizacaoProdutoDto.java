@@ -9,8 +9,8 @@ public record DadosAtualizacaoProdutoDto(
 
     String descricao,
     Double preco,
-    Boolean casco,
-    Boolean bloqueado
+    Integer casco,
+    Integer bloqueado
     )
  {
     public DadosAtualizacaoProdutoDto(Produto produto) {

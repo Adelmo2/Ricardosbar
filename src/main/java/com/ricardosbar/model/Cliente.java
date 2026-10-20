@@ -33,7 +33,7 @@ public class Cliente {
     private Double saldo_pagar;
     private LocalDateTime primeira_compra;
     private Double limite;
-    private Boolean bloqueado;
+    private Integer bloqueado;
     private String observacao;
     private String email;
 
@@ -88,11 +88,11 @@ public class Cliente {
     }
 
     public void excluir() {
-        this.bloqueado = true;
+        this.bloqueado = 1;
     }
 
     public void ativar() {
-        this.bloqueado = false;
+        this.bloqueado = 0;
     }
 
     public void atualizaSaldo(Double valor, String operacao) {

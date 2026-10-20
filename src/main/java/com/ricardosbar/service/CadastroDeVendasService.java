@@ -35,11 +35,11 @@ public class CadastroDeVendasService {
         var cliente =  clienteRepository.getReferenceById(dados.id_clientes());
         var produto =  produtoRepository.getReferenceById(dados.id_produtos());
 
-        if (produto.getBloqueado() == true) {
+        if (produto.getBloqueado() == 1) {
             throw new validacaoException("Produto bloqueado!");
         }
 
-        if (cliente.getBloqueado() == true && produto.getId() != 1) {
+        if (cliente.getBloqueado() == 1 && produto.getId() != 1) {
             throw new validacaoException("Cliente bloqueado!");
         }
 

@@ -19,19 +19,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfigurations {
 
     @Autowired
-
-
     private SecurityFilter securityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                .anyRequest().authenticated()
-                .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+        return http
+                // Desabilita a proteção CSRF usando lambdas
+                .csrf(csrf -> csrf.disable())
+
+                // Configura a política de sessão como Stateless
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // Configura as regras de autorização de requisições
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+
+                // Adiciona o filtro customizado antes do filtro de autenticação padrão
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
 
@@ -44,6 +52,4 @@ public class SecurityConfigurations {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }

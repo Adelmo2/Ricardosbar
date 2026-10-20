@@ -6,8 +6,8 @@ public record DadosDetalhamentoProdutoDto(
         Long id,
         String descricao,
         Double preco,
-        Boolean casco,
-        Boolean bloqueado
+        Integer casco,
+        Integer bloqueado
 ) {
     public DadosDetalhamentoProdutoDto(Produto produto) {
         this(produto.getId(),
