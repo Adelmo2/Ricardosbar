@@ -26,7 +26,7 @@ import java.util.List;
 public class ProdutoController {
 
     @Autowired
-    private CadastroDeProdutosService cadastroDeProdutos;
+    private CadastroDeProdutosService cadastroDeProdutosService;
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -43,7 +43,7 @@ public class ProdutoController {
     @Transactional
     @RequestMapping("/cadastrar")
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroProdutoDto dados, UriComponentsBuilder uriBuilder){
-        var dto = cadastroDeProdutos.cadastrar(dados);
+        var dto = cadastroDeProdutosService.cadastrar(dados);
         return ResponseEntity.ok(dto);
     }
 

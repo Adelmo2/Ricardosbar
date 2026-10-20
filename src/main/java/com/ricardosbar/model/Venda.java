@@ -33,10 +33,10 @@ public class Venda {
     private String hora_pagamento;
     private Double valor;
     private Double total;
-    private Boolean cupom;
-    private Boolean pago;
+    private Integer cupom;
+    private Integer pago;
 
-    public Venda(Cliente cliente, Produto produto, Double quantidade, Double valor, Boolean cupom, Boolean pago) {
+    public Venda(Cliente cliente, Produto produto, Double quantidade, Double valor, Integer cupom, Integer pago) {
         this.cliente = cliente;
         this.produto = produto;
         this.quantidade = quantidade;

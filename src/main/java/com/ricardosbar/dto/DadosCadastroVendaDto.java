@@ -16,7 +16,7 @@ public record DadosCadastroVendaDto(
         String hora_pagamento,
         Double valor,
         Double total,
-        Boolean cupom,
-        Boolean pago
+        Integer cupom,
+        Integer pago
 ) {
 }

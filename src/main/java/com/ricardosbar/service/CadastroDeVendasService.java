@@ -43,6 +43,12 @@ public class CadastroDeVendasService {
             throw new validacaoException("Cliente bloqueado!");
         }
 
+        Double valorTotal = (dados.valor() * dados.quantidade());
+        if (cliente.getLimite() > 0 && valorTotal >  cliente.getLimite() ) {
+            String mensagem = ("Valor Total de venda(s): " +  valorTotal + " Maior que o Limite do cliente: " + cliente.getLimite() );
+            throw new validacaoException(mensagem);
+        }
+
         if (produto.getId() != 1) {
             if (dados.quantidade() == 0) {
                 throw new validacaoException("Informe a quantidade!");

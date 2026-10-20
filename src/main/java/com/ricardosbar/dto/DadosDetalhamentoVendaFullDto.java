@@ -14,8 +14,8 @@ public record DadosDetalhamentoVendaFullDto(
         LocalDateTime data_pagamento,
         Double valor,
         Double total,
-        Boolean cupom,
-        Boolean pago
+        Integer cupom,
+        Integer pago
 ) {
 
     public DadosDetalhamentoVendaFullDto(Venda venda) {

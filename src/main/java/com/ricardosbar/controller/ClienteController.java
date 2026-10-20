@@ -27,14 +27,14 @@ public class ClienteController {
     private ClienteRepository clienteRepository;
 
     @Autowired
-    private CadastroDeClientesService cadastroDeClientes;
+    private CadastroDeClientesService cadastroDeClientesService;
 
     @PostMapping
     @Transactional
     @RequestMapping("/cadastrar")
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroClienteDto dados, UriComponentsBuilder uriBuilder){
         //clienteRepository.save(cliente);
-        var dto = cadastroDeClientes.cadastrar(dados);
+        var dto = cadastroDeClientesService.cadastrar(dados);
         return ResponseEntity.ok(dto);
     }
 

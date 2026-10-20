@@ -13,8 +13,8 @@ public record DadosDetalhamentoVendaDto(
         String hora_pagamento,
         Double valor,
         Double total,
-        Boolean cupom,
-        Boolean pago
+        Integer cupom,
+        Integer pago
 ) {
     public DadosDetalhamentoVendaDto(Venda venda) {
         this(

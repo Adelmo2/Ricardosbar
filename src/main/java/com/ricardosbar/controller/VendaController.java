@@ -7,6 +7,7 @@ import com.ricardosbar.service.DadosDetalhamentoVendasService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class VendaController {
 
     @Autowired
-    private CadastroDeVendasService cadastroDeVendas;
+    private CadastroDeVendasService cadastroDeVendasServie;
 
     @Autowired
     private ClienteRepository clienteRepository;
@@ -29,16 +30,18 @@ public class VendaController {
     @Transactional
     @RequestMapping("/cadastrar")
     public ResponseEntity cadastrarVenda(@RequestBody @Valid DadosCadastroVendaDto dados) {
-        System.out.println("******DADOS****");
-        System.out.println(dados);
-        var dto = cadastroDeVendas.cadastrarVenda(dados);
-        return ResponseEntity.ok(dto);
+        try {
+            var dto = cadastroDeVendasServie.cadastrarVenda(dados);
+            return ResponseEntity.ok(dto);
+        } catch (ValidationException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
 
     @DeleteMapping("/excluir/{id}")
     @Transactional
     public ResponseEntity excluir(@PathVariable Long id) {
-        cadastroDeVendas.excluir(id);
+        cadastroDeVendasServie.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
