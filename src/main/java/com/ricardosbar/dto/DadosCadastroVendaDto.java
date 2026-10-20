@@ -1,4 +1,4 @@
-package com.ricardosbar.domain.venda;
+package com.ricardosbar.dto;
 
 import jakarta.validation.constraints.NotNull;
 

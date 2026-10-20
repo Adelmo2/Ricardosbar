@@ -1,6 +1,6 @@
-package com.ricardosbar.domain.produto;
+package com.ricardosbar.dto;
 
-public record DadosCadastroProduto(
+public record DadosCadastroProdutoDto(
         Long id,
         String descricao,
         Double preco,

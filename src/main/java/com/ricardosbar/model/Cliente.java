@@ -37,53 +37,53 @@ public class Cliente {
     private String observacao;
     private String email;
 
-    public Cliente(DadosCadastroClienteDto dados) {
+    public Cliente(DadosCadastroClienteDto dto) {
 
-        this.nome = dados.nome().toUpperCase();
-        this.telefone = dados.telefone();
-        this.endereco = dados.endereco();
-        this.bairro = dados.bairro();
-        this.cidade = dados.cidade();
-        this.uf = dados.uf();
-        this.valor_ult_pagto = dados.valor_ult_pagto();
-        this.dt_ult_pago = dados.dt_ult_pago();
-        this.hora_ult_pago = dados.hora_ult_pago();
-        this.saldo_pagar = dados.saldo_pagar();
-        this.primeira_compra = dados.primeira_compra();
-        this.limite = dados.limite();
-        this.bloqueado = dados.bloqueado();
-        this.observacao = dados.observacao();
-        this.email = dados.email();
+        this.nome = dto.nome().toUpperCase();
+        this.telefone = dto.telefone();
+        this.endereco = dto.endereco();
+        this.bairro = dto.bairro();
+        this.cidade = dto.cidade();
+        this.uf = dto.uf();
+        this.valor_ult_pagto = dto.valor_ult_pagto();
+        this.dt_ult_pago = dto.dt_ult_pago();
+        this.hora_ult_pago = dto.hora_ult_pago();
+        this.saldo_pagar = dto.saldo_pagar();
+        this.primeira_compra = dto.primeira_compra();
+        this.limite = dto.limite();
+        this.bloqueado = dto.bloqueado();
+        this.observacao = dto.observacao();
+        this.email = dto.email();
     }
 
-    public void atualizarCadastroCliente(DadosAtualizacaoClienteDto dados) {
+    public void atualizarCadastroCliente(DadosAtualizacaoClienteDto dto) {
 
-        if (dados.nome() != null) {
-            this.nome = dados.nome().toUpperCase();
+        if (dto.nome() != null) {
+            this.nome = dto.nome().toUpperCase();
         }
-        if (dados.telefone() != null) {
-            this.telefone = dados.telefone();
+        if (dto.telefone() != null) {
+            this.telefone = dto.telefone();
         }
-        if (dados.endereco() != null) {
-            this.endereco = dados.endereco();
+        if (dto.endereco() != null) {
+            this.endereco = dto.endereco();
         }
-        if (dados.bairro() != null) {
-            this.bairro = dados.bairro();
+        if (dto.bairro() != null) {
+            this.bairro = dto.bairro();
         }
-        if (dados.cidade() != null) {
-            this.cidade = dados.cidade();
+        if (dto.cidade() != null) {
+            this.cidade = dto.cidade();
         }
-        if (dados.uf() != null) {
-            this.uf = dados.uf();
+        if (dto.uf() != null) {
+            this.uf = dto.uf();
         }
-        if (dados.observacao() != null) {
-            this.observacao = dados.observacao();
+        if (dto.observacao() != null) {
+            this.observacao = dto.observacao();
         }
-        if (dados.email() != null) {
-            this.email = dados.email();
+        if (dto.email() != null) {
+            this.email = dto.email();
         }
-        if (dados.limite() > 0) {
-            this.limite = dados.limite();
+        if (dto.limite() > 0) {
+            this.limite = dto.limite();
         }
     }
 

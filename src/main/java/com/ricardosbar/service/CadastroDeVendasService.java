@@ -1,11 +1,11 @@
 package com.ricardosbar.service;
 
 import com.ricardosbar.repository.ClienteRepository;
-import com.ricardosbar.domain.produto.ProdutoRepository;
-import com.ricardosbar.domain.validacaoException;
-import com.ricardosbar.domain.venda.DadosCadastroVendaDto;
-import com.ricardosbar.domain.venda.DadosDetalhamentoVendaDto;
-import com.ricardosbar.domain.venda.VendaRepository;
+import com.ricardosbar.repository.ProdutoRepository;
+import com.ricardosbar.validacoes.validacaoException;
+import com.ricardosbar.dto.DadosCadastroVendaDto;
+import com.ricardosbar.dto.DadosDetalhamentoVendaDto;
+import com.ricardosbar.repository.VendaRepository;
 import com.ricardosbar.model.Venda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

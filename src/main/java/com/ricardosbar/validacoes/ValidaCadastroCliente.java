@@ -1,6 +1,5 @@
 package com.ricardosbar.validacoes;
 
-import com.ricardosbar.domain.validacaoException;
 import com.ricardosbar.dto.DadosAtualizacaoClienteDto;
 import com.ricardosbar.dto.DadosCadastroClienteDto;
 import com.ricardosbar.repository.ClienteRepository;

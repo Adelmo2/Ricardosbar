@@ -9,7 +9,4 @@ public class RicardosbarApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RicardosbarApplication.class, args);
 	}
-
-
-
 }

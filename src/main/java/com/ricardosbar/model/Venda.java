@@ -1,6 +1,5 @@
 package com.ricardosbar.model;
 
-import com.ricardosbar.domain.produto.Produto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

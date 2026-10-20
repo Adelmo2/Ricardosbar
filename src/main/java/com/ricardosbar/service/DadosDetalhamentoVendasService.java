@@ -1,8 +1,10 @@
-package com.ricardosbar.domain.venda;
+package com.ricardosbar.service;
 
+import com.ricardosbar.dto.DadosDetalhamentoVendaFullDto;
 import com.ricardosbar.repository.ClienteRepository;
-import com.ricardosbar.domain.produto.ProdutoRepository;
-import com.ricardosbar.domain.validacaoException;
+import com.ricardosbar.repository.ProdutoRepository;
+import com.ricardosbar.validacoes.validacaoException;
+import com.ricardosbar.repository.VendaRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 

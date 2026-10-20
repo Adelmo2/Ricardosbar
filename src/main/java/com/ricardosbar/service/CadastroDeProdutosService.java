@@ -1,15 +1,20 @@
-package com.ricardosbar.domain.produto;
+package com.ricardosbar.service;
 
+import com.ricardosbar.model.Produto;
+import com.ricardosbar.repository.ProdutoRepository;
+import com.ricardosbar.validacoes.ValidaCadastroProduto;
+import com.ricardosbar.dto.DadosCadastroProdutoDto;
+import com.ricardosbar.dto.DadosDetalhamentoProdutoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CadastroDeProdutos {
+public class CadastroDeProdutosService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public DadosDetalhamentoProduto cadastrar(DadosCadastroProduto dados) {
+    public DadosDetalhamentoProdutoDto cadastrar(DadosCadastroProdutoDto dados) {
 
         var validaCadastro = new ValidaCadastroProduto();
         validaCadastro.ValidaNovoProduto(dados, produtoRepository);
@@ -23,6 +28,6 @@ public class CadastroDeProdutos {
         );
         produtoRepository.save(produto);
         //return new DadosDetalhamentoProduto(produto);
-        return new DadosDetalhamentoProduto(produto);
+        return new DadosDetalhamentoProdutoDto(produto);
     }
 }

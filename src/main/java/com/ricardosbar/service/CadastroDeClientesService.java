@@ -14,28 +14,28 @@ public class CadastroDeClientesService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public DadosDetalhamentoClienteDto cadastrar(DadosCadastroClienteDto dados) {
+    public DadosDetalhamentoClienteDto cadastrar(DadosCadastroClienteDto dto) {
 
         var validaCadastro = new ValidaCadastroCliente();
-        validaCadastro.ValidaNovoCliente(dados, clienteRepository);
+        validaCadastro.ValidaNovoCliente(dto, clienteRepository);
 
         var cliente = new Cliente(
                 null,
-                dados.nome(),
-                dados.telefone(),
-                dados.endereco(),
-                dados.bairro(),
-                dados.cidade(),
-                dados.uf(),
-                dados.valor_ult_pagto(),
-                dados.dt_ult_pago(),
-                dados.hora_ult_pago(),
-                dados.saldo_pagar(),
-                dados.primeira_compra(),
-                dados.limite(),
-                dados.bloqueado(),
-                dados.observacao(),
-                dados.email()
+                dto.nome(),
+                dto.telefone(),
+                dto.endereco(),
+                dto.bairro(),
+                dto.cidade(),
+                dto.uf(),
+                dto.valor_ult_pagto(),
+                dto.dt_ult_pago(),
+                dto.hora_ult_pago(),
+                dto.saldo_pagar(),
+                dto.primeira_compra(),
+                dto.limite(),
+                dto.bloqueado(),
+                dto.observacao(),
+                dto.email()
                 );
         clienteRepository.save(cliente);
         return new DadosDetalhamentoClienteDto(cliente);

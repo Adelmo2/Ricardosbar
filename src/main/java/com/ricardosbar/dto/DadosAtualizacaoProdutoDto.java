@@ -1,8 +1,9 @@
-package com.ricardosbar.domain.produto;
+package com.ricardosbar.dto;
 
+import com.ricardosbar.model.Produto;
 import jakarta.validation.constraints.NotNull;
 
-public record DadosAtualizacaoProduto(
+public record DadosAtualizacaoProdutoDto(
     @NotNull
     Long id,
 
@@ -12,7 +13,7 @@ public record DadosAtualizacaoProduto(
     Boolean bloqueado
     )
  {
-    public DadosAtualizacaoProduto(Produto produto) {
+    public DadosAtualizacaoProdutoDto(Produto produto) {
         this(produto.getId(),
                 produto.getDescricao(),
                 produto.getPreco(),

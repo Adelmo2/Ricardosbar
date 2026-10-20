@@ -1,6 +1,12 @@
 package com.ricardosbar.controller;
 
-import com.ricardosbar.domain.produto.*;
+import com.ricardosbar.dto.DadosAtualizacaoProdutoDto;
+import com.ricardosbar.dto.DadosCadastroProdutoDto;
+import com.ricardosbar.dto.DadosDetalhamentoProdutoDto;
+import com.ricardosbar.model.Produto;
+import com.ricardosbar.repository.ProdutoRepository;
+import com.ricardosbar.service.CadastroDeProdutosService;
+import com.ricardosbar.validacoes.ValidaCadastroProduto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,23 +26,23 @@ import java.util.List;
 public class ProdutoController {
 
     @Autowired
-    private CadastroDeProdutos cadastroDeProdutos;
+    private CadastroDeProdutosService cadastroDeProdutos;
 
     @Autowired
     private ProdutoRepository produtoRepository;
 
     @GetMapping
     @RequestMapping("/listarapi")
-    public ResponseEntity cadastrarProduto(@RequestBody @Valid DadosCadastroProduto dados){
+    public ResponseEntity cadastrarProduto(@RequestBody @Valid DadosCadastroProdutoDto dados){
         System.out.println("TesteApi | Dados: " + dados);
         var produto = new Produto(dados);
-        return ResponseEntity.ok(new DadosDetalhamentoProduto(produto));
+        return ResponseEntity.ok(new DadosDetalhamentoProdutoDto(produto));
     }
 
     @PostMapping
     @Transactional
     @RequestMapping("/cadastrar")
-    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroProduto dados, UriComponentsBuilder uriBuilder){
+    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroProdutoDto dados, UriComponentsBuilder uriBuilder){
         var dto = cadastroDeProdutos.cadastrar(dados);
         return ResponseEntity.ok(dto);
     }
@@ -44,13 +50,13 @@ public class ProdutoController {
     @PutMapping
     @Transactional
     @RequestMapping("/alterar")
-    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoProduto dados) {
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoProdutoDto dados) {
         var produto = produtoRepository.getReferenceById(dados.id());
         var validaCadastro = new ValidaCadastroProduto();
         validaCadastro.ValidaAlteracaoProduto(dados, produtoRepository);
 
         produto.atualizarCadastroProduto(dados);
-        return ResponseEntity.ok(new DadosAtualizacaoProduto(produto));
+        return ResponseEntity.ok(new DadosAtualizacaoProdutoDto(produto));
     }
 
     @DeleteMapping("/inativar/{id}")
@@ -77,31 +83,31 @@ public class ProdutoController {
 
     @GetMapping
     @RequestMapping("/listarativos")
-    public ResponseEntity<Page<DadosDetalhamentoProduto>> listarAtivos(@PageableDefault(size = 10, sort = {"descricao"}) Pageable paginacao) {
-        var page = produtoRepository.findAllByBloqueadoFalse(paginacao).map(DadosDetalhamentoProduto::new);
+    public ResponseEntity<Page<DadosDetalhamentoProdutoDto>> listarAtivos(@PageableDefault(size = 10, sort = {"descricao"}) Pageable paginacao) {
+        var page = produtoRepository.findAllByBloqueadoFalse(paginacao).map(DadosDetalhamentoProdutoDto::new);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping
     @RequestMapping("/listarinativos")
-    public ResponseEntity<Page<DadosDetalhamentoProduto>> listarInativos(@PageableDefault(size = 10, sort = {"descricao"}) Pageable paginacao) {
-        var page = produtoRepository.findAllByBloqueadoTrue(paginacao).map(DadosDetalhamentoProduto::new);
+    public ResponseEntity<Page<DadosDetalhamentoProdutoDto>> listarInativos(@PageableDefault(size = 10, sort = {"descricao"}) Pageable paginacao) {
+        var page = produtoRepository.findAllByBloqueadoTrue(paginacao).map(DadosDetalhamentoProdutoDto::new);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/consultar/{id}")
     public ResponseEntity consultarProduto(@PathVariable Long id) {
         var produto = produtoRepository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoProduto(produto));
+        return ResponseEntity.ok(new DadosDetalhamentoProdutoDto(produto));
     }
 
     @GetMapping("/pesquisarnomeproduto/{nomeProduto}")
-    public ResponseEntity<List<DadosDetalhamentoProduto>> pesquisarNomeProduto(@PathVariable String nomeProduto) {
+    public ResponseEntity<List<DadosDetalhamentoProdutoDto>> pesquisarNomeProduto(@PathVariable String nomeProduto) {
 
         List<Produto> produtos = produtoRepository.findAllByDescricaoContainingIgnoreCase(nomeProduto);
 
-        List<DadosDetalhamentoProduto> retorno = produtos.stream()
-                .map(DadosDetalhamentoProduto::new)
+        List<DadosDetalhamentoProdutoDto> retorno = produtos.stream()
+                .map(DadosDetalhamentoProdutoDto::new)
                 .toList();
         System.out.println(retorno);
         return ResponseEntity.ok(retorno);

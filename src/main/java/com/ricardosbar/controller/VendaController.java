@@ -2,8 +2,8 @@ package com.ricardosbar.controller;
 
 import com.ricardosbar.repository.ClienteRepository;
 import com.ricardosbar.service.CadastroDeVendasService;
-import com.ricardosbar.domain.venda.DadosCadastroVendaDto;
-import com.ricardosbar.domain.venda.DadosDetalhamentoVendasService;
+import com.ricardosbar.dto.DadosCadastroVendaDto;
+import com.ricardosbar.service.DadosDetalhamentoVendasService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
