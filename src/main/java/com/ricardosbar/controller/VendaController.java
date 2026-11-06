@@ -3,6 +3,7 @@ package com.ricardosbar.controller;
 import com.ricardosbar.repository.ClienteRepository;
 import com.ricardosbar.service.CadastroDeVendasService;
 import com.ricardosbar.dto.DadosCadastroVendaDto;
+import com.ricardosbar.dto.DadosAtualizacaoVendaDto;
 import com.ricardosbar.service.DadosDetalhamentoVendasService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("vendas")
-@SecurityRequirement(name = "bearer-key")
+//@SecurityRequirement(name = "bearer-key")
 public class VendaController {
 
     @Autowired
@@ -36,6 +37,17 @@ public class VendaController {
         } catch (ValidationException exception) {
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
+    }
+
+    @PutMapping("/alterar")
+    @Transactional
+    public ResponseEntity alterarVenda(@RequestBody @Valid DadosAtualizacaoVendaDto dados) {
+        return ResponseEntity.ok(cadastroDeVendasServie.alterar(dados));
+    }
+
+    @GetMapping("/listartodos")
+    public ResponseEntity listarTodas() {
+        return ResponseEntity.ok(dadosDetalhamentoVendasService.listaTodas());
     }
 
     @DeleteMapping("/excluir/{id}")

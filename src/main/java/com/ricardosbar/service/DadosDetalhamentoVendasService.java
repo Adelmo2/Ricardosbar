@@ -33,6 +33,10 @@ public class DadosDetalhamentoVendasService {
         return  vendaRepository.vendasPorCliente(id);
     }
 
+    public List<DadosDetalhamentoVendaFullDto> listaTodas() {
+        return vendaRepository.listarTodas();
+    }
+
     public List<DadosDetalhamentoVendaFullDto> listaVendaDoProduto(Long id) {
         if (!produtoRepository.existsById(id)) {
             throw new validacaoException("Id do produto informado não existe!");

@@ -19,8 +19,8 @@ public record DadosDetalhamentoVendaDto(
     public DadosDetalhamentoVendaDto(Venda venda) {
         this(
             venda.getId(),
-            venda.getCliente().getId(),
             venda.getProduto().getId(),
+            venda.getCliente().getId(),
             venda.getQuantidade(),
             venda.getData_pagamento(),
             venda.getHora_pagamento(),

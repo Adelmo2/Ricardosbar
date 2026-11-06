@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("clientes")
-@SecurityRequirement(name = "bearer-key")
+//@SecurityRequirement(name = "bearer-key")
 public class ClienteController {
 
     @Autowired

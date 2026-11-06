@@ -1,5 +1,6 @@
 package com.ricardosbar.model;
 
+import com.ricardosbar.dto.DadosAtualizacaoVendaDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -46,5 +47,21 @@ public class Venda {
         this.total = (quantidade * valor);
         this.cupom = cupom;
         this.pago = pago;
+    }
+
+    public void atualizar(DadosAtualizacaoVendaDto dto) {
+        if (dto.quantidade() != null) {
+            this.quantidade = dto.quantidade();
+        }
+        if (dto.valor() != null) {
+            this.valor = dto.valor();
+        }
+        if (dto.cupom() != null) {
+            this.cupom = dto.cupom();
+        }
+        if (dto.pago() != null) {
+            this.pago = dto.pago();
+        }
+        this.total = (this.quantidade * this.valor);
     }
 }

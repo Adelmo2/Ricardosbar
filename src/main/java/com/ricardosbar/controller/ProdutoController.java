@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("produtos")
-@SecurityRequirement(name = "bearer-key")
+//@SecurityRequirement(name = "bearer-key")
 public class ProdutoController {
 
     @Autowired

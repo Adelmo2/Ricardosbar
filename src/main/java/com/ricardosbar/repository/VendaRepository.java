@@ -26,4 +26,11 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
     WHERE v.produto.id = :id
     """)
     List<DadosDetalhamentoVendaFullDto> vendasPorProduto(@Param("id") Long id);
+
+    @Query("""
+    SELECT new com.ricardosbar.dto.DadosDetalhamentoVendaFullDto(v)
+    FROM Venda v
+    ORDER BY v.id DESC
+    """)
+    List<DadosDetalhamentoVendaFullDto> listarTodas();
 }

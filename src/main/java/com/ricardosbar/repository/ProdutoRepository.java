@@ -9,7 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProdutoRepository  extends JpaRepository<Produto, Long> {
+    // bloqueado é Integer (0/1), então "BloqueadoFalse/True" derivado não funciona: consulta explícita
+    @Query("select p from Produto p where coalesce(p.bloqueado, 0) = 0")
     Page<Produto> findAllByBloqueadoFalse(Pageable paginacao);
+
+    @Query("select p from Produto p where p.bloqueado = 1")
     Page<Produto> findAllByBloqueadoTrue(Pageable paginacao);
     //Page<Produto> findAll(Pageable paginacao);
 
