@@ -39,16 +39,10 @@ function alteracaoVazia(): AtualizacaoVenda {
 
       @case ('por-cliente') {
         <div class="linha">
-          <label>Cliente
-            <select [(ngModel)]="filtroId" (ngModelChange)="recarregar()">
-              <option [ngValue]="null">Selecione...</option>
-              @for (c of clientes(); track c.id) {
-                <option [ngValue]="c.id">{{ c.id }} — {{ c.nome }}</option>
-              }
-            </select>
-          </label>
+          <label>Nome do cliente <input type="text" [(ngModel)]="filtroNome" (keyup.enter)="recarregar()" /></label>
+          <button (click)="recarregar()" [disabled]="!filtroNome.trim()">Consultar</button>
         </div>
-        @if (filtroId) { <ng-container *ngTemplateOutlet="tabela" /> }
+        @if (pesquisouCliente) { <ng-container *ngTemplateOutlet="tabela" /> }
       }
 
       @case ('por-produto') {
@@ -222,6 +216,8 @@ export class VendasComponent {
   totalGeral = computed(() => this.vendas().reduce((s, v) => s + (v.total ?? 0), 0));
 
   filtroId: number | null = null;
+  filtroNome = '';
+  pesquisouCliente = false;
   nova: CadastroVenda = vendaVazia();
   alteracao: AtualizacaoVenda = alteracaoVazia();
 
@@ -241,10 +237,12 @@ export class VendasComponent {
     this.vendas.set([]);
     this.editandoId.set(null);
     this.filtroId = null;
+    this.filtroNome = '';
+    this.pesquisouCliente = false;
     this.nova = vendaVazia();
     this.alteracao = alteracaoVazia();
 
-    if (acao === 'por-cliente' || acao === 'cadastrar') {
+    if (acao === 'cadastrar') {
       this.clienteApi.listarTodos().subscribe({ next: (r) => this.clientes.set(r), error: (e) => this.erro.set(mensagemErro(e)) });
     }
     if (acao === 'por-produto' || acao === 'cadastrar') {
@@ -269,7 +267,9 @@ export class VendasComponent {
     let obs: Observable<Venda[]> | null = null;
     switch (this.acao()) {
       case 'listar': obs = this.vendaApi.listarTodas(); break;
-      case 'por-cliente': if (this.filtroId) obs = this.vendaApi.porCliente(this.filtroId); break;
+      case 'por-cliente':
+        if (this.filtroNome.trim()) { obs = this.vendaApi.porCliente(this.filtroNome); this.pesquisouCliente = true; }
+        break;
       case 'por-produto': if (this.filtroId) obs = this.vendaApi.porProduto(this.filtroId); break;
     }
     if (obs) this.executar(obs, (r) => this.vendas.set(r));

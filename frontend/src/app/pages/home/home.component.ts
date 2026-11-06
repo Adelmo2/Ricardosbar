@@ -85,7 +85,7 @@ export class HomeComponent {
       titulo: 'Clientes',
       botoes: [
         { rotulo: 'Listar todos', rota: 'clientes/listar', metodo: 'GET' },
-        { rotulo: 'Consultar por ID', rota: 'clientes/consultar', metodo: 'GET' },
+        { rotulo: 'Consultar por nome', rota: 'clientes/consultar', metodo: 'GET' },
         { rotulo: 'Saldo do cliente', rota: 'clientes/saldo', metodo: 'GET' },
         { rotulo: 'Cadastrar', rota: 'clientes/cadastrar', metodo: 'POST' },
         { rotulo: 'Alterar', rota: 'clientes/alterar', metodo: 'PUT' },

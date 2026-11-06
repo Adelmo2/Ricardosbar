@@ -62,16 +62,22 @@ public class ClienteController {
         return ResponseEntity.ok(new DadosDetalhamentoClienteDto(cliente));
     }
 
-    @GetMapping("/saldo/{id}")
-    public ResponseEntity saldo(@PathVariable Long id) {
-        var cliente = clienteRepository.getReferenceById(id);
-        return ResponseEntity.ok(new SaldoClienteDto(cliente));
+    @GetMapping("/saldo/{nome}")
+    public ResponseEntity saldo(@PathVariable String nome) {
+        var clientes = clienteRepository.findByNomeContainingIgnoreCaseOrderByNome(nome.trim())
+                .stream()
+                .map(SaldoClienteDto::new)
+                .toList();
+        return ResponseEntity.ok(clientes);
     }
 
-    @GetMapping("/consultarcliente/{id}")
-    public ResponseEntity consultarCliente(@PathVariable Long id) {
-        var cliente = clienteRepository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoClienteDto(cliente));
+    @GetMapping("/consultarcliente/{nome}")
+    public ResponseEntity consultarCliente(@PathVariable String nome) {
+        var clientes = clienteRepository.findByNomeContainingIgnoreCaseOrderByNome(nome.trim())
+                .stream()
+                .map(DadosDetalhamentoClienteDto::new)
+                .toList();
+        return ResponseEntity.ok(clientes);
     }
 
     @DeleteMapping("/inativar/{id}")

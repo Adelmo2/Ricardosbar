@@ -16,9 +16,10 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
     @Query("""
     SELECT new com.ricardosbar.dto.DadosDetalhamentoVendaFullDto(v)
     FROM Venda v
-    WHERE v.cliente.id = :id
+    WHERE UPPER(v.cliente.nome) LIKE UPPER(CONCAT('%', :nome, '%'))
+    ORDER BY v.cliente.nome, v.id DESC
     """)
-    List<DadosDetalhamentoVendaFullDto> vendasPorCliente(@Param("id") Long id);
+    List<DadosDetalhamentoVendaFullDto> vendasPorCliente(@Param("nome") String nome);
 
     @Query("""
     SELECT new com.ricardosbar.dto.DadosDetalhamentoVendaFullDto(v)

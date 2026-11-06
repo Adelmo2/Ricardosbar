@@ -26,11 +26,11 @@ public class DadosDetalhamentoVendasService {
 //                .toList();
 //    }
 
-    public List<DadosDetalhamentoVendaFullDto> listaVendaDoCliente(Long id) {
-        if (!clienteRepository.existsById(id)) {
-            throw new validacaoException("Id do cliente informado não existe!");
+    public List<DadosDetalhamentoVendaFullDto> listaVendaDoCliente(String nome) {
+        if (clienteRepository.findByNomeContainingIgnoreCaseOrderByNome(nome.trim()).isEmpty()) {
+            throw new validacaoException("Nenhum cliente encontrado com o nome informado!");
         }
-        return  vendaRepository.vendasPorCliente(id);
+        return  vendaRepository.vendasPorCliente(nome.trim());
     }
 
     public List<DadosDetalhamentoVendaFullDto> listaTodas() {

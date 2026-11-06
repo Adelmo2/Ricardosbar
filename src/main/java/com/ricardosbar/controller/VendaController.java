@@ -57,9 +57,9 @@ public class VendaController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/consultarvendascliente/{id}")
-    public ResponseEntity consultarVendaCliente(@PathVariable Long id) {
-        return ResponseEntity.ok(dadosDetalhamentoVendasService.listaVendaDoCliente(id)
+    @GetMapping("/consultarvendascliente/{nome}")
+    public ResponseEntity consultarVendaCliente(@PathVariable String nome) {
+        return ResponseEntity.ok(dadosDetalhamentoVendasService.listaVendaDoCliente(nome)
         );
     }
 

@@ -72,8 +72,8 @@ ricardosbar/
 | GET | `/clientes/listartodos` | Lista todos os clientes |
 | GET | `/clientes/listarapi` | Lista clientes (formato para o frontend) |
 | GET | `/clientes/{id}` | Detalha cliente |
-| GET | `/clientes/consultarcliente/{id}` | Consulta cliente |
-| GET | `/clientes/saldo/{id}` | Consulta saldo do cliente |
+| GET | `/clientes/consultarcliente/{nome}` | Consulta clientes cujo nome contém o texto |
+| GET | `/clientes/saldo/{nome}` | Saldo dos clientes cujo nome contém o texto |
 | DELETE | `/clientes/inativar/{id}` | Inativa cliente |
 | POST | `/clientes/ativar/{id}` | Reativa cliente |
 
@@ -97,7 +97,7 @@ ricardosbar/
 | POST | `/vendas/cadastrar` | Registra venda/pagamento |
 | PUT | `/vendas/alterar` | Altera venda |
 | GET | `/vendas/listartodos` | Lista todas as vendas |
-| GET | `/vendas/consultarvendascliente/{id}` | Vendas de um cliente |
+| GET | `/vendas/consultarvendascliente/{nome}` | Vendas dos clientes cujo nome contém o texto |
 | GET | `/vendas/consultarvendasproduto/{id}` | Vendas de um produto |
 | DELETE | `/vendas/excluir/{id}` | Exclui venda |
 

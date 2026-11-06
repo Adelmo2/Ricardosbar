@@ -7,7 +7,7 @@ import { Cliente, SaldoCliente } from '../../core/models';
 
 const TITULOS: Record<string, string> = {
   listar: 'Clientes — listar todos',
-  consultar: 'Clientes — consultar por ID',
+  consultar: 'Clientes — consultar por nome',
   saldo: 'Clientes — saldo',
   cadastrar: 'Clientes — cadastrar',
   alterar: 'Clientes — alterar',
@@ -68,11 +68,10 @@ function clienteVazio(): Cliente {
 
       @case ('consultar') {
         <div class="linha">
-          <label>ID do cliente <input type="number" [(ngModel)]="id" (keyup.enter)="consultar()" /></label>
-          <button (click)="consultar()" [disabled]="!id">Consultar</button>
-          <button class="secundario" (click)="detalhar()" [disabled]="!id">Detalhar (/clientes/id)</button>
+          <label>Nome do cliente <input type="text" [(ngModel)]="nome" (keyup.enter)="consultar()" /></label>
+          <button (click)="consultar()" [disabled]="!nome.trim()">Consultar</button>
         </div>
-        @if (detalhe(); as c) {
+        @for (c of detalhes(); track c.id) {
           <dl class="cartao detalhe">
             <dt>ID</dt><dd>{{ c.id }}</dd>
             <dt>Nome</dt><dd>{{ c.nome }}</dd>
@@ -88,15 +87,17 @@ function clienteVazio(): Cliente {
             <dt>Situação</dt><dd>{{ c.bloqueado === 1 ? 'Inativo' : 'Ativo' }}</dd>
             <dt>Observação</dt><dd>{{ c.observacao }}</dd>
           </dl>
+        } @empty {
+          @if (pesquisou()) { <p>Nenhum cliente encontrado.</p> }
         }
       }
 
       @case ('saldo') {
         <div class="linha">
-          <label>ID do cliente <input type="number" [(ngModel)]="id" (keyup.enter)="consultarSaldo()" /></label>
-          <button (click)="consultarSaldo()" [disabled]="!id">Consultar saldo</button>
+          <label>Nome do cliente <input type="text" [(ngModel)]="nome" (keyup.enter)="consultarSaldo()" /></label>
+          <button (click)="consultarSaldo()" [disabled]="!nome.trim()">Consultar saldo</button>
         </div>
-        @if (saldo(); as s) {
+        @for (s of saldos(); track s.id) {
           <dl class="cartao detalhe">
             <dt>ID</dt><dd>{{ s.id }}</dd>
             <dt>Nome</dt><dd>{{ s.nome }}</dd>
@@ -104,6 +105,8 @@ function clienteVazio(): Cliente {
             <dt>Limite</dt><dd>{{ s.limite | number: '1.2-2' }}</dd>
             <dt>Saldo a pagar</dt><dd><strong>{{ s.saldo_pagar | number: '1.2-2' }}</strong></dd>
           </dl>
+        } @empty {
+          @if (pesquisou()) { <p>Nenhum cliente encontrado.</p> }
         }
       }
 
@@ -166,8 +169,10 @@ export class ClientesComponent {
 
   id: number | null = null;
   lista = signal<Cliente[]>([]);
-  detalhe = signal<Cliente | null>(null);
-  saldo = signal<SaldoCliente | null>(null);
+  nome = '';
+  pesquisou = signal(false);
+  detalhes = signal<Cliente[]>([]);
+  saldos = signal<SaldoCliente[]>([]);
   form = signal<Cliente | null>(null);
 
   constructor() {
@@ -180,8 +185,9 @@ export class ClientesComponent {
   private iniciar(acao: string): void {
     this.titulo.set(TITULOS[acao] ?? 'Clientes');
     this.limparMensagens();
-    this.detalhe.set(null);
-    this.saldo.set(null);
+    this.pesquisou.set(false);
+    this.detalhes.set([]);
+    this.saldos.set([]);
     this.form.set(acao === 'cadastrar' ? clienteVazio() : null);
     if (acao === 'listar') this.listar();
   }
@@ -201,15 +207,19 @@ export class ClientesComponent {
   }
 
   consultar(): void {
-    this.executar(this.api.consultar(this.id!), (r) => this.detalhe.set(r));
-  }
-
-  detalhar(): void {
-    this.executar(this.api.detalhar(this.id!), (r) => this.detalhe.set(r));
+    if (!this.nome.trim()) return;
+    this.executar(this.api.consultar(this.nome), (r) => {
+      this.detalhes.set(r);
+      this.pesquisou.set(true);
+    });
   }
 
   consultarSaldo(): void {
-    this.executar(this.api.saldo(this.id!), (r) => this.saldo.set(r));
+    if (!this.nome.trim()) return;
+    this.executar(this.api.saldo(this.nome), (r) => {
+      this.saldos.set(r);
+      this.pesquisou.set(true);
+    });
   }
 
   carregarParaAlterar(): void {

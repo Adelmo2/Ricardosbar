@@ -25,11 +25,11 @@ export class ClienteService {
   detalhar(id: number): Observable<Cliente> {
     return this.http.get<Cliente>(`${this.url}/${id}`);
   }
-  consultar(id: number): Observable<Cliente> {
-    return this.http.get<Cliente>(`${this.url}/consultarcliente/${id}`);
+  consultar(nome: string): Observable<Cliente[]> {
+    return this.http.get<Cliente[]>(`${this.url}/consultarcliente/${encodeURIComponent(nome.trim())}`);
   }
-  saldo(id: number): Observable<SaldoCliente> {
-    return this.http.get<SaldoCliente>(`${this.url}/saldo/${id}`);
+  saldo(nome: string): Observable<SaldoCliente[]> {
+    return this.http.get<SaldoCliente[]>(`${this.url}/saldo/${encodeURIComponent(nome.trim())}`);
   }
   cadastrar(cliente: Cliente): Observable<Cliente> {
     return this.http.post<Cliente>(`${this.url}/cadastrar`, cliente);
@@ -87,8 +87,8 @@ export class VendaService {
   listarTodas(): Observable<Venda[]> {
     return this.http.get<Venda[]>(`${this.url}/listartodos`);
   }
-  porCliente(id: number): Observable<Venda[]> {
-    return this.http.get<Venda[]>(`${this.url}/consultarvendascliente/${id}`);
+  porCliente(nome: string): Observable<Venda[]> {
+    return this.http.get<Venda[]>(`${this.url}/consultarvendascliente/${encodeURIComponent(nome.trim())}`);
   }
   porProduto(id: number): Observable<Venda[]> {
     return this.http.get<Venda[]>(`${this.url}/consultarvendasproduto/${id}`);
