@@ -149,6 +149,9 @@ function clienteVazio(): Cliente {
             <label>UF <input name="uf" [(ngModel)]="f.uf" maxlength="2" /></label>
             <label>E-mail <input name="email" type="email" [(ngModel)]="f.email" maxlength="100" /></label>
             <label>Limite <input name="limite" type="number" step="0.01" [(ngModel)]="f.limite" /></label>
+            @if (acao() === 'alterar' && f.id) {
+              <label>Saldo a pagar <input name="saldo_pagar" [value]="(f.saldo_pagar ?? 0) | number: '1.2-2'" readonly disabled /></label>
+            }
             <label>Observação <input name="observacao" [(ngModel)]="f.observacao" maxlength="150" /></label>
           </div>
           <button type="submit" [disabled]="!f.nome || !f.cidade">

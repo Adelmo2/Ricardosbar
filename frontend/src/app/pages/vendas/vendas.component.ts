@@ -66,7 +66,7 @@ function alteracaoVazia(): AtualizacaoVenda {
               <select name="cliente" [(ngModel)]="nova.id_clientes" required>
                 <option [ngValue]="null">Selecione...</option>
                 @for (c of clientesAtivos(); track c.id) {
-                  <option [ngValue]="c.id">{{ c.id }} — {{ c.nome }}</option>
+                  <option [ngValue]="c.id">{{ c.id }} — {{ c.nome }} (saldo: {{ (c.saldo_pagar ?? 0) | number: '1.2-2' }})</option>
                 }
               </select>
             </label>
@@ -284,6 +284,8 @@ export class VendasComponent {
     this.executar(this.vendaApi.cadastrar(this.nova), () => {
       this.sucesso.set('Venda cadastrada com sucesso.');
       this.nova = vendaVazia();
+      // recarrega os clientes para refletir o saldo a pagar atualizado
+      this.clienteApi.listarTodos().subscribe({ next: (c) => this.clientes.set(c) });
     });
   }
 
