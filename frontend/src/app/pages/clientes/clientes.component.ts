@@ -33,7 +33,13 @@ function clienteVazio(): Cliente {
 
     @switch (acao()) {
       @case ('listar') {
-        <div class="linha"><button class="secundario" (click)="listar()">Atualizar</button></div>
+        <form class="linha" (ngSubmit)="listar()">
+          <label>Nome do cliente
+            <input name="filtroNome" [(ngModel)]="filtroNome" placeholder="Parte do nome (vazio = todos)" maxlength="40" />
+          </label>
+          <button type="submit">Pesquisar</button>
+          <button type="button" class="secundario" (click)="limparFiltro()" [disabled]="!filtroNome">Limpar</button>
+        </form>
         <div class="tabela-wrap">
           <table>
             <thead>
@@ -173,6 +179,7 @@ export class ClientesComponent {
   id: number | null = null;
   lista = signal<Cliente[]>([]);
   nome = '';
+  filtroNome = '';
   pesquisou = signal(false);
   detalhes = signal<Cliente[]>([]);
   saldos = signal<SaldoCliente[]>([]);
@@ -192,6 +199,7 @@ export class ClientesComponent {
     this.detalhes.set([]);
     this.saldos.set([]);
     this.form.set(acao === 'cadastrar' ? clienteVazio() : null);
+    this.filtroNome = '';
     if (acao === 'listar') this.listar();
   }
 
@@ -205,8 +213,16 @@ export class ClientesComponent {
     obs.subscribe({ next: ok, error: (e) => this.erro.set(mensagemErro(e)) });
   }
 
+  /** Lista os clientes cujo nome contém o filtro; sem filtro, lista todos */
   listar(): void {
-    this.executar(this.api.listarTodos(), (r) => this.lista.set(r));
+    const filtro = this.filtroNome.trim();
+    const obs = filtro ? this.api.consultar(filtro) : this.api.listarTodos();
+    this.executar(obs, (r) => this.lista.set(r));
+  }
+
+  limparFiltro(): void {
+    this.filtroNome = '';
+    this.listar();
   }
 
   consultar(): void {
