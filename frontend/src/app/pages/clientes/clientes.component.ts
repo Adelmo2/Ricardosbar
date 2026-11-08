@@ -1,6 +1,7 @@
 import { Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ClienteService, mensagemErro } from '../../core/api.service';
 import { Cliente, SaldoCliente } from '../../core/models';
@@ -45,7 +46,7 @@ function clienteVazio(): Cliente {
             <thead>
               <tr>
                 <th>ID</th><th>Nome</th><th>Telefone</th><th>Cidade</th><th>UF</th>
-                <th class="num">Limite</th><th class="num">Saldo a pagar</th><th>Situação</th><th>Ação</th>
+                <th class="num">Limite</th><th class="num">Saldo a pagar</th><th>Situação</th><th>Alterar</th><th>Ação</th>
               </tr>
             </thead>
             <tbody>
@@ -56,6 +57,7 @@ function clienteVazio(): Cliente {
                   <td class="num">{{ c.limite | number: '1.2-2' }}</td>
                   <td class="num">{{ c.saldo_pagar | number: '1.2-2' }}</td>
                   <td>{{ c.bloqueado === 1 ? 'Inativo' : 'Ativo' }}</td>
+                  <td><button class="secundario pequeno" (click)="irParaAlterar(c.id!)">Alterar</button></td>
                   <td>
                     @if (c.bloqueado === 1) {
                       <button class="secundario pequeno" (click)="ativar(c.id!)">Ativar</button>
@@ -65,7 +67,7 @@ function clienteVazio(): Cliente {
                   </td>
                 </tr>
               } @empty {
-                <tr><td colspan="9">Nenhum cliente encontrado.</td></tr>
+                <tr><td colspan="10">Nenhum cliente encontrado.</td></tr>
               }
             </tbody>
           </table>
@@ -170,8 +172,11 @@ function clienteVazio(): Cliente {
 })
 export class ClientesComponent {
   private api = inject(ClienteService);
+  private router = inject(Router);
 
   acao = input('listar');
+  /** Query param ?id= (usado pelo botão "Alterar" da listagem para abrir o cliente já carregado) */
+  idParam = input<string | undefined>(undefined, { alias: 'id' });
   titulo = signal('');
   erro = signal('');
   sucesso = signal('');
@@ -188,11 +193,12 @@ export class ClientesComponent {
   constructor() {
     effect(() => {
       const a = this.acao();
-      untracked(() => this.iniciar(a));
+      const idParam = this.idParam();
+      untracked(() => this.iniciar(a, idParam));
     });
   }
 
-  private iniciar(acao: string): void {
+  private iniciar(acao: string, idParam?: string): void {
     this.titulo.set(TITULOS[acao] ?? 'Clientes');
     this.limparMensagens();
     this.pesquisou.set(false);
@@ -201,6 +207,16 @@ export class ClientesComponent {
     this.form.set(acao === 'cadastrar' ? clienteVazio() : null);
     this.filtroNome = '';
     if (acao === 'listar') this.listar();
+    const idNum = Number(idParam);
+    if (acao === 'alterar' && idParam && Number.isInteger(idNum) && idNum > 0) {
+      this.id = idNum;
+      this.carregarParaAlterar();
+    }
+  }
+
+  /** Abre a tela de alteração com o cliente da linha já carregado */
+  irParaAlterar(id: number): void {
+    this.router.navigate(['/home/clientes/alterar'], { queryParams: { id } });
   }
 
   private limparMensagens(): void {
