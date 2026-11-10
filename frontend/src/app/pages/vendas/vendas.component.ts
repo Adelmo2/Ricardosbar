@@ -33,7 +33,13 @@ function alteracaoVazia(): AtualizacaoVenda {
 
     @switch (acao()) {
       @case ('listar') {
-        <div class="linha"><button class="secundario" (click)="recarregar()">Atualizar</button></div>
+        <form class="linha" (ngSubmit)="recarregar()">
+          <label>Nome do cliente
+            <input name="filtroNome" [(ngModel)]="filtroNome" placeholder="Parte do nome (vazio = todas)" maxlength="40" />
+          </label>
+          <button type="submit">Pesquisar</button>
+          <button type="button" class="secundario" (click)="limparFiltro()" [disabled]="!filtroNome">Limpar</button>
+        </form>
         <ng-container *ngTemplateOutlet="tabela" />
       }
 
@@ -266,13 +272,27 @@ export class VendasComponent {
     this.editandoId.set(null);
     let obs: Observable<Venda[]> | null = null;
     switch (this.acao()) {
-      case 'listar': obs = this.vendaApi.listarTodas(); break;
+      case 'listar':
+        // com filtro, lista só as vendas dos clientes cujo nome contém o texto; sem filtro, todas
+        obs = this.filtroNome.trim() ? this.vendaApi.porCliente(this.filtroNome) : this.vendaApi.listarTodas();
+        break;
       case 'por-cliente':
         if (this.filtroNome.trim()) { obs = this.vendaApi.porCliente(this.filtroNome); this.pesquisouCliente = true; }
         break;
       case 'por-produto': if (this.filtroId) obs = this.vendaApi.porProduto(this.filtroId); break;
     }
-    if (obs) this.executar(obs, (r) => this.vendas.set(r));
+    if (!obs) return;
+    this.limparMensagens();
+    obs.subscribe({
+      next: (r) => this.vendas.set(r),
+      // a API responde com erro quando nenhum cliente casa com o nome: não deixa a lista anterior na tela
+      error: (e) => { this.vendas.set([]); this.erro.set(mensagemErro(e)); },
+    });
+  }
+
+  limparFiltro(): void {
+    this.filtroNome = '';
+    this.recarregar();
   }
 
   aoEscolherProduto(id: number | null): void {
