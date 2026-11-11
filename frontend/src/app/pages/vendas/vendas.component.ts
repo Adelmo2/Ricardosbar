@@ -170,7 +170,7 @@ function alteracaoVazia(): AtualizacaoVenda {
                   <td></td>
                 </tr>
               } @else {
-                <tr>
+                <tr [class.negativa]="acao() === 'listar' && (v.total ?? 0) < 0">
                   <td>{{ v.id }}</td>
                   <td>{{ v.id_cliente }} — {{ v.nome_cliente }}</td>
                   <td>{{ v.id_produto }} — {{ v.descricao_produto }}</td>
@@ -202,6 +202,7 @@ function alteracaoVazia(): AtualizacaoVenda {
     tr.editando td { background: #fff7e8; }
     tr.editando input, tr.editando select { width: 90px; padding: 3px 6px; }
     td.acoes { display: flex; gap: 6px; }
+    tr.negativa td { color: #0d47a1; font-weight: bold; }
   `,
 })
 export class VendasComponent {
