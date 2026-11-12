@@ -60,10 +60,19 @@ public class CadastroDeVendasService {
             }
         }
 
-        var venda = new Venda(cliente, produto, dados.quantidade(), dados.valor(), dados.cupom(), dados.pago());
+        if (dados.valor() < 0 ) {
+            throw new validacaoException("Valor não pode ser negativo!");
+        }
+
+        var venda = new Venda();
+        if (dados.id_produtos() == 1) {
+            venda = new Venda(cliente, produto, dados.quantidade(), (dados.valor() * -1), dados.cupom(), dados.pago());
+        } else {
+            venda = new Venda(cliente, produto, dados.quantidade(), dados.valor(), dados.cupom(), dados.pago());
+        }
 
         if (produto.getId() == 1) {
-            cliente.atualizaSaldo((dados.valor()), "-");
+            cliente.atualizaSaldo(((dados.valor() * -1)), "+");
         } else {
             cliente.atualizaSaldo((dados.valor() * dados.quantidade()), "+");
         }
@@ -80,7 +89,6 @@ public class CadastroDeVendasService {
         var cliente = clienteRepository.getReferenceById(venda.getCliente().getId());
         boolean pagamento = venda.getProduto().getId() == 1;
 
-        Double valorAntigo = venda.getValor();
         Double totalAntigo = venda.getTotal();
 
         venda.atualizar(dados);
@@ -98,12 +106,9 @@ public class CadastroDeVendasService {
             }
         }
 
-        // Ajusta o saldo pela diferença, usando "+" para não alterar os dados de último pagamento
-        if (pagamento) {
-            cliente.atualizaSaldo(valorAntigo - venda.getValor(), "+");
-        } else {
-            cliente.atualizaSaldo(venda.getTotal() - totalAntigo, "+");
-        }
+        // Ajusta o saldo pela diferença dos totais (pagamento tem total negativo),
+        // usando "-" para não alterar os dados de último pagamento
+        cliente.atualizaSaldo(totalAntigo - venda.getTotal(), "-");
 
         return new DadosDetalhamentoVendaFullDto(venda);
     }
@@ -111,12 +116,8 @@ public class CadastroDeVendasService {
     public void excluir(Long id) {
         var venda = vendaRepository.getReferenceById(id);
         var cliente =  clienteRepository.getReferenceById(venda.getCliente().getId());
-        var produto = produtoRepository.getReferenceById(venda.getProduto().getId());
-        if (produto.getId() == 1) {
-            cliente.atualizaSaldo(venda.getTotal(), "+");
-        } else {
-            cliente.atualizaSaldo(venda.getTotal(), "-");
-        }
+        // desfaz o efeito da venda no saldo; o pagamento tem total negativo, então a mesma conta o devolve
+        cliente.atualizaSaldo(venda.getTotal(), "-");
         vendaRepository.deleteById(id);
     }
 }

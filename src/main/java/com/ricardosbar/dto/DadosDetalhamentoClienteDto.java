@@ -25,7 +25,7 @@ public record DadosDetalhamentoClienteDto(
 {
     public DadosDetalhamentoClienteDto(Cliente cliente) {
         this(cliente.getId(),
-                cliente.getNome(),
+                cliente.getNome().toUpperCase(),
                 cliente.getTelefone(),
                 cliente.getEndereco(),
                 cliente.getBairro(),

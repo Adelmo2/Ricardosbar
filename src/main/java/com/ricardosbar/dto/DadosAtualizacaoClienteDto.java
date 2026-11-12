@@ -18,7 +18,7 @@ public record DadosAtualizacaoClienteDto(
 {
     public DadosAtualizacaoClienteDto(Cliente cliente) {
         this(cliente.getId(),
-                cliente.getNome(),
+                cliente.getNome().toUpperCase(),
                 cliente.getTelefone(),
                 cliente.getEndereco(),
                 cliente.getBairro(),

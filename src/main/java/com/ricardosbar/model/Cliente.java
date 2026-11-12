@@ -43,8 +43,8 @@ public class Cliente {
         this.telefone = dto.telefone();
         this.endereco = dto.endereco();
         this.bairro = dto.bairro();
-        this.cidade = dto.cidade();
-        this.uf = dto.uf();
+        this.cidade = dto.cidade().toUpperCase();
+        this.uf = dto.uf().toUpperCase();
         this.valor_ult_pagto = dto.valor_ult_pagto();
         this.dt_ult_pago = dto.dt_ult_pago();
         this.hora_ult_pago = dto.hora_ult_pago();
@@ -68,13 +68,13 @@ public class Cliente {
             this.endereco = dto.endereco();
         }
         if (dto.bairro() != null) {
-            this.bairro = dto.bairro();
+            this.bairro = dto.bairro().toUpperCase();
         }
         if (dto.cidade() != null) {
-            this.cidade = dto.cidade();
+            this.cidade = dto.cidade().toUpperCase();
         }
         if (dto.uf() != null) {
-            this.uf = dto.uf();
+            this.uf = dto.uf().toUpperCase();
         }
         if (dto.observacao() != null) {
             this.observacao = dto.observacao();
@@ -101,10 +101,10 @@ public class Cliente {
         } else if (operacao.equals("-")) {
             this.saldo_pagar -= valor;
         }
-        if (this.primeira_compra == null && operacao.equals("+")) {
+        if (this.primeira_compra == null && valor > 0) {
             this.primeira_compra = LocalDateTime.now();
         }
-        if (operacao.equals("-") && valor > 0) {
+        if (operacao.equals("+") && valor < 0) {
             this.dt_ult_pago = LocalDateTime.now();
             this.valor_ult_pagto = valor;
         }

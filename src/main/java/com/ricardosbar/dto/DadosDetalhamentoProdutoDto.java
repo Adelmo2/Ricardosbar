@@ -11,7 +11,7 @@ public record DadosDetalhamentoProdutoDto(
 ) {
     public DadosDetalhamentoProdutoDto(Produto produto) {
         this(produto.getId(),
-            produto.getDescricao(),
+            produto.getDescricao().toUpperCase(),
             produto.getPreco(),
             produto.getCasco(),
             produto.getBloqueado()
