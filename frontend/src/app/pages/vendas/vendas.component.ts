@@ -37,8 +37,11 @@ function alteracaoVazia(): AtualizacaoVenda {
           <label>Nome do cliente
             <input name="filtroNome" [(ngModel)]="filtroNome" placeholder="Parte do nome (vazio = todas)" maxlength="40" />
           </label>
+          <label>Nome do produto
+            <input name="filtroProduto" [(ngModel)]="filtroProduto" placeholder="Parte do nome (vazio = todos)" maxlength="40" />
+          </label>
           <button type="submit">Pesquisar</button>
-          <button type="button" class="secundario" (click)="limparFiltro()" [disabled]="!filtroNome">Limpar</button>
+          <button type="button" class="secundario" (click)="limparFiltro()" [disabled]="!filtroNome && !filtroProduto">Limpar</button>
         </form>
         <ng-container *ngTemplateOutlet="tabela" />
       }
@@ -224,6 +227,7 @@ export class VendasComponent {
 
   filtroId: number | null = null;
   filtroNome = '';
+  filtroProduto = '';
   pesquisouCliente = false;
   nova: CadastroVenda = vendaVazia();
   alteracao: AtualizacaoVenda = alteracaoVazia();
@@ -245,6 +249,7 @@ export class VendasComponent {
     this.editandoId.set(null);
     this.filtroId = null;
     this.filtroNome = '';
+    this.filtroProduto = '';
     this.pesquisouCliente = false;
     this.nova = vendaVazia();
     this.alteracao = alteracaoVazia();
@@ -275,7 +280,9 @@ export class VendasComponent {
     switch (this.acao()) {
       case 'listar':
         // com filtro, lista só as vendas dos clientes cujo nome contém o texto; sem filtro, todas
-        obs = this.filtroNome.trim() ? this.vendaApi.porCliente(this.filtroNome) : this.vendaApi.listarTodas();
+        // o filtro por produto (sozinho ou combinado com o de cliente) usa a pesquisa combinada da API
+        if (this.filtroProduto.trim()) obs = this.vendaApi.pesquisar(this.filtroNome, this.filtroProduto);
+        else obs = this.filtroNome.trim() ? this.vendaApi.porCliente(this.filtroNome) : this.vendaApi.listarTodas();
         break;
       case 'por-cliente':
         if (this.filtroNome.trim()) { obs = this.vendaApi.porCliente(this.filtroNome); this.pesquisouCliente = true; }
@@ -293,6 +300,7 @@ export class VendasComponent {
 
   limparFiltro(): void {
     this.filtroNome = '';
+    this.filtroProduto = '';
     this.recarregar();
   }
 

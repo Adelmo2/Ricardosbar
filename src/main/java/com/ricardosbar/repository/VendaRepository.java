@@ -34,4 +34,14 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
     ORDER BY v.id DESC
     """)
     List<DadosDetalhamentoVendaFullDto> listarTodas();
+
+    // filtros opcionais: texto vazio casa com qualquer cliente/produto
+    @Query("""
+    SELECT new com.ricardosbar.dto.DadosDetalhamentoVendaFullDto(v)
+    FROM Venda v
+    WHERE UPPER(v.cliente.nome) LIKE UPPER(CONCAT('%', :cliente, '%'))
+      AND UPPER(v.produto.descricao) LIKE UPPER(CONCAT('%', :produto, '%'))
+    ORDER BY v.id DESC
+    """)
+    List<DadosDetalhamentoVendaFullDto> pesquisar(@Param("cliente") String cliente, @Param("produto") String produto);
 }

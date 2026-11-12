@@ -50,6 +50,12 @@ public class VendaController {
         return ResponseEntity.ok(dadosDetalhamentoVendasService.listaTodas());
     }
 
+    @GetMapping("/pesquisar")
+    public ResponseEntity pesquisar(@RequestParam(defaultValue = "") String cliente,
+                                    @RequestParam(defaultValue = "") String produto) {
+        return ResponseEntity.ok(dadosDetalhamentoVendasService.pesquisar(cliente, produto));
+    }
+
     @DeleteMapping("/excluir/{id}")
     @Transactional
     public ResponseEntity excluir(@PathVariable Long id) {

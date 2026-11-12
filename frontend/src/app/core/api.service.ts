@@ -90,6 +90,10 @@ export class VendaService {
   porCliente(nome: string): Observable<Venda[]> {
     return this.http.get<Venda[]>(`${this.url}/consultarvendascliente/${encodeURIComponent(nome.trim())}`);
   }
+  /** Vendas filtradas por parte do nome do cliente e/ou da descrição do produto (vazio = sem filtro) */
+  pesquisar(cliente: string, produto: string): Observable<Venda[]> {
+    return this.http.get<Venda[]>(`${this.url}/pesquisar`, { params: { cliente: cliente.trim(), produto: produto.trim() } });
+  }
   porProduto(id: number): Observable<Venda[]> {
     return this.http.get<Venda[]>(`${this.url}/consultarvendasproduto/${id}`);
   }

@@ -37,6 +37,11 @@ public class DadosDetalhamentoVendasService {
         return vendaRepository.listarTodas();
     }
 
+    /** Vendas cujo nome do cliente e descrição do produto contêm os textos informados (vazio = sem filtro) */
+    public List<DadosDetalhamentoVendaFullDto> pesquisar(String cliente, String produto) {
+        return vendaRepository.pesquisar(cliente.trim(), produto.trim());
+    }
+
     public List<DadosDetalhamentoVendaFullDto> listaVendaDoProduto(Long id) {
         if (!produtoRepository.existsById(id)) {
             throw new validacaoException("Id do produto informado não existe!");
