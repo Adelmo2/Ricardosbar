@@ -43,8 +43,13 @@ public class Venda {
         this.quantidade = quantidade;
         this.data_pagamento = LocalDateTime.now();
         this.hora_pagamento = "";
-        this.valor = valor;
-        this.total = (quantidade * valor);
+        if (produto.getId() == 1 && valor > 0) {
+            this.valor = (valor * -1);
+            this.total = (quantidade * (valor * -1));
+        } else {
+            this.valor = valor;
+            this.total = (quantidade * valor);
+        }
         this.cupom = cupom;
         this.pago = pago;
     }
@@ -54,7 +59,11 @@ public class Venda {
             this.quantidade = dto.quantidade();
         }
         if (dto.valor() != null) {
-            this.valor = dto.valor();
+            if (this.produto.getId() == 1 && dto.valor() > 0) {
+                this.valor = (dto.valor() * -1);
+            } else {
+                this.valor = dto.valor();
+            }
         }
         if (dto.cupom() != null) {
             this.cupom = dto.cupom();
@@ -63,5 +72,10 @@ public class Venda {
             this.pago = dto.pago();
         }
         this.total = (this.quantidade * this.valor);
+//        if (this.produto.getId() == 1 && dto.valor() > 0) {
+//            this.total = (this.quantidade * (this.valor * -1));
+//        } else {
+//            this.total = (this.quantidade * this.valor);
+//        }
     }
 }
