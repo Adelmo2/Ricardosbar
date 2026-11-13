@@ -79,4 +79,5 @@ export interface Venda {
   total: number;
   cupom: number;
   pago: number;
+  saldo_pagar_cliente: number | null;
 }

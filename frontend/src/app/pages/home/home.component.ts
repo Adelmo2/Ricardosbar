@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
@@ -33,6 +34,14 @@ interface Botao {
         }
       </nav>
       <main>
+        <button type="button" class="secundario voltar" (click)="voltar()" title="Voltar para a tela anterior">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="11" fill="currentColor" />
+            <path d="M13 6.5 7.5 12l5.5 5.5M8 12h9" fill="none" stroke="#fff" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          Voltar
+        </button>
         <router-outlet />
       </main>
     </div>
@@ -65,6 +74,11 @@ interface Botao {
     .botao:hover { background: rgba(255,255,255,.08); }
     .botao.ativo { background: var(--primary); border-color: var(--primary); }
     main { flex: 1; padding: 20px; overflow-x: hidden; min-width: 0; }
+    .voltar {
+      display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px;
+      padding: 5px 12px 5px 6px; font-weight: 600;
+    }
+    .voltar svg { flex-shrink: 0; }
     @media (max-width: 760px) {
       .corpo { flex-direction: column; }
       nav { width: 100%; }
@@ -74,6 +88,12 @@ interface Botao {
 })
 export class HomeComponent {
   auth = inject(AuthService);
+  private location = inject(Location);
+
+  /** Retorna para a tela visitada anteriormente (histórico do navegador). */
+  voltar(): void {
+    this.location.back();
+  }
 
   grupos: { titulo: string; destaque?: boolean; botoes: Botao[] }[] = [
     {

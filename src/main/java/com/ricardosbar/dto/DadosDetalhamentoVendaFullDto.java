@@ -15,7 +15,8 @@ public record DadosDetalhamentoVendaFullDto(
         Double valor,
         Double total,
         Integer cupom,
-        Integer pago
+        Integer pago,
+        Double saldo_pagar_cliente
 ) {
 
     public DadosDetalhamentoVendaFullDto(Venda venda) {
@@ -30,7 +31,8 @@ public record DadosDetalhamentoVendaFullDto(
             venda.getValor(),
             venda.getTotal(),
             venda.getCupom(),
-            venda.getPago()
+            venda.getPago(),
+            venda.getCliente().getSaldo_pagar()
         );
     }
 }

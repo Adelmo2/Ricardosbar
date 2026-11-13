@@ -149,7 +149,7 @@ function alteracaoVazia(): AtualizacaoVenda {
             <tr>
               <th>ID</th><th>Cliente</th><th>Produto</th>
               <th class="num">Qtde</th><th class="num">Valor</th><th class="num">Total</th>
-              <th>Data</th><th>Cupom</th><th>Pago</th>
+              <th>Data</th><th>Cupom</th><th>Pago</th><th class="num">Saldo do Cliente</th>
               <th>Alterar</th><th>Excluir</th>
             </tr>
           </thead>
@@ -170,6 +170,7 @@ function alteracaoVazia(): AtualizacaoVenda {
                   <td>
                     <select [(ngModel)]="edicao.pago"><option [ngValue]="0">Não</option><option [ngValue]="1">Sim</option></select>
                   </td>
+                  <td class="num">{{ v.saldo_pagar_cliente ?? 0 | number: '1.2-2' }}</td>
                   <td class="acoes">
                     <button class="pequeno" (click)="salvarEdicao()">Salvar</button>
                     <button class="secundario pequeno" (click)="editandoId.set(null)">Cancelar</button>
@@ -187,17 +188,18 @@ function alteracaoVazia(): AtualizacaoVenda {
                   <td>{{ v.data_pagamento | date: 'dd/MM/yyyy HH:mm' }}</td>
                   <td>{{ v.cupom === 1 ? 'Sim' : 'Não' }}</td>
                   <td>{{ v.pago === 1 ? 'Sim' : 'Não' }}</td>
+                  <td class="num">{{ v.saldo_pagar_cliente ?? 0 | number: '1.2-2' }}</td>
                   <td><button class="secundario pequeno" (click)="editar(v)">Alterar</button></td>
                   <td><button class="perigo pequeno" (click)="excluir(v.id)">Excluir</button></td>
                 </tr>
               }
             } @empty {
-              <tr><td colspan="11">Nenhuma venda encontrada.</td></tr>
+              <tr><td colspan="12">Nenhuma venda encontrada.</td></tr>
             }
           </tbody>
           @if (vendas().length) {
             <tfoot>
-              <tr><th colspan="5">Total geral</th><th class="num">{{ totalGeral() | number: '1.2-2' }}</th><th colspan="5"></th></tr>
+              <tr><th colspan="5">Total geral</th><th class="num">{{ totalGeral() | number: '1.2-2' }}</th><th colspan="6"></th></tr>
             </tfoot>
           }
         </table>
