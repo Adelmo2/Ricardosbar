@@ -109,4 +109,8 @@ public class Cliente {
             this.valor_ult_pagto = valor;
         }
     }
+
+    public void atualizaSaldoDeExclusao(Double valor) {
+        this.saldo_pagar -= valor;
+    }
 }

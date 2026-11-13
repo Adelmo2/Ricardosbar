@@ -117,7 +117,7 @@ public class CadastroDeVendasService {
         var venda = vendaRepository.getReferenceById(id);
         var cliente =  clienteRepository.getReferenceById(venda.getCliente().getId());
         // desfaz o efeito da venda no saldo; o pagamento tem total negativo, então a mesma conta o devolve
-        cliente.atualizaSaldo(venda.getTotal(), "-");
+        cliente.atualizaSaldoDeExclusao(venda.getTotal());
         vendaRepository.deleteById(id);
     }
 }
