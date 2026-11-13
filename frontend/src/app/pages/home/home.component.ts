@@ -5,7 +5,6 @@ import { AuthService } from '../../core/auth.service';
 interface Botao {
   rotulo: string;
   rota: string;
-  metodo: 'GET' | 'POST' | 'PUT' | 'DELETE';
 }
 
 @Component({
@@ -24,10 +23,9 @@ interface Botao {
       <nav>
         @for (grupo of grupos; track grupo.titulo) {
           <section>
-            <h3>{{ grupo.titulo }}</h3>
+            <h3 [class.destaque]="grupo.destaque">{{ grupo.titulo }}</h3>
             @for (b of grupo.botoes; track b.rota) {
               <a class="botao" [routerLink]="b.rota" routerLinkActive="ativo">
-                <span class="metodo" [attr.data-m]="b.metodo">{{ b.metodo }}</span>
                 {{ b.rotulo }}
               </a>
             }
@@ -55,6 +53,10 @@ interface Botao {
       padding: 12px; overflow-y: auto;
     }
     h3 { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; opacity: .7; margin: 14px 4px 6px; }
+    h3.destaque {
+      color: #00008b; font-weight: 700; opacity: 1; font-size: 1.05rem;
+      background: #f5f0e1; padding: 5px 8px; border-radius: 4px; margin-left: 0; margin-right: 0;
+    }
     .botao {
       display: flex; align-items: center; gap: 8px; padding: 7px 8px; margin-bottom: 4px;
       border-radius: 6px; color: var(--sidebar-text); text-decoration: none; font-size: .9rem;
@@ -62,13 +64,6 @@ interface Botao {
     }
     .botao:hover { background: rgba(255,255,255,.08); }
     .botao.ativo { background: var(--primary); border-color: var(--primary); }
-    .metodo {
-      font-size: .65rem; font-weight: 700; width: 46px; text-align: center; padding: 2px 0;
-      border-radius: 4px; background: #3d6fb6; color: #fff;
-    }
-    .metodo[data-m='POST'] { background: #2e8b57; }
-    .metodo[data-m='PUT'] { background: #c58a12; }
-    .metodo[data-m='DELETE'] { background: #b3261e; }
     main { flex: 1; padding: 20px; overflow-x: hidden; min-width: 0; }
     @media (max-width: 760px) {
       .corpo { flex-direction: column; }
@@ -80,42 +75,42 @@ interface Botao {
 export class HomeComponent {
   auth = inject(AuthService);
 
-  grupos: { titulo: string; botoes: Botao[] }[] = [
+  grupos: { titulo: string; destaque?: boolean; botoes: Botao[] }[] = [
     {
-      titulo: 'Clientes',
+      titulo: 'C L I E N T E S',
+      destaque: true,
       botoes: [
-        { rotulo: 'Listar todos', rota: 'clientes/listar', metodo: 'GET' },
-        { rotulo: 'Consultar por nome', rota: 'clientes/consultar', metodo: 'GET' },
-        { rotulo: 'Saldo do cliente', rota: 'clientes/saldo', metodo: 'GET' },
-        { rotulo: 'Cadastrar', rota: 'clientes/cadastrar', metodo: 'POST' },
-        { rotulo: 'Alterar', rota: 'clientes/alterar', metodo: 'PUT' },
-        { rotulo: 'Ativar', rota: 'clientes/ativar', metodo: 'POST' },
-        { rotulo: 'Inativar', rota: 'clientes/inativar', metodo: 'DELETE' },
+        { rotulo: 'Listar todos', rota: 'clientes/listar' },
+        { rotulo: 'Consultar por nome', rota: 'clientes/consultar' },
+        { rotulo: 'Cadastrar', rota: 'clientes/cadastrar' },
+        { rotulo: 'Alterar', rota: 'clientes/alterar' },
+        { rotulo: 'Ativar', rota: 'clientes/ativar' },
+        { rotulo: 'Inativar', rota: 'clientes/inativar' },
       ],
     },
     {
-      titulo: 'Produtos',
+      titulo: 'P R O D U T O S',
+      destaque: true,
       botoes: [
-        { rotulo: 'Listar todos', rota: 'produtos/listar', metodo: 'GET' },
-        { rotulo: 'Listar ativos', rota: 'produtos/ativos', metodo: 'GET' },
-        { rotulo: 'Listar inativos', rota: 'produtos/inativos', metodo: 'GET' },
-        { rotulo: 'Consultar por ID', rota: 'produtos/consultar', metodo: 'GET' },
-        { rotulo: 'Pesquisar por nome', rota: 'produtos/pesquisar', metodo: 'GET' },
-        { rotulo: 'Cadastrar', rota: 'produtos/cadastrar', metodo: 'POST' },
-        { rotulo: 'Alterar', rota: 'produtos/alterar', metodo: 'PUT' },
-        { rotulo: 'Ativar', rota: 'produtos/ativar', metodo: 'POST' },
-        { rotulo: 'Inativar', rota: 'produtos/inativar', metodo: 'DELETE' },
+        { rotulo: 'Listar todos', rota: 'produtos/listar' },
+        { rotulo: 'Listar ativos', rota: 'produtos/ativos' },
+        { rotulo: 'Listar inativos', rota: 'produtos/inativos' },
+        { rotulo: 'Pesquisar por nome', rota: 'produtos/pesquisar' },
+        { rotulo: 'Cadastrar', rota: 'produtos/cadastrar' },
+        { rotulo: 'Alterar', rota: 'produtos/alterar' },
+        { rotulo: 'Ativar', rota: 'produtos/ativar' },
+        { rotulo: 'Inativar', rota: 'produtos/inativar' },
       ],
     },
     {
-      titulo: 'Vendas',
+      titulo: 'V E N D A S',
+      destaque: true,
       botoes: [
-        { rotulo: 'Listar todas', rota: 'vendas/listar', metodo: 'GET' },
-        { rotulo: 'Vendas por cliente', rota: 'vendas/por-cliente', metodo: 'GET' },
-        { rotulo: 'Vendas por produto', rota: 'vendas/por-produto', metodo: 'GET' },
-        { rotulo: 'Cadastrar venda', rota: 'vendas/cadastrar', metodo: 'POST' },
-        { rotulo: 'Alterar venda', rota: 'vendas/alterar', metodo: 'PUT' },
-        { rotulo: 'Excluir venda', rota: 'vendas/excluir', metodo: 'DELETE' },
+        { rotulo: 'Listar todas', rota: 'vendas/listar' },
+        { rotulo: 'Vendas por cliente', rota: 'vendas/por-cliente' },
+        { rotulo: 'Vendas por produto', rota: 'vendas/por-produto' },
+        { rotulo: 'Cadastro de Venda e Pagamento', rota: 'vendas/cadastrar' },
+        { rotulo: 'Alterar venda', rota: 'vendas/alterar' },
       ],
     },
   ];

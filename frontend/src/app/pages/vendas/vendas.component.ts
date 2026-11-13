@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ClienteService, ProdutoService, VendaService, mensagemErro } from '../../core/api.service';
 import { AtualizacaoVenda, CadastroVenda, Cliente, Produto, Venda } from '../../core/models';
@@ -24,7 +25,7 @@ function alteracaoVazia(): AtualizacaoVenda {
 
 @Component({
   selector: 'app-vendas',
-  imports: [FormsModule, DecimalPipe, DatePipe, NgTemplateOutlet],
+  imports: [FormsModule, DecimalPipe, DatePipe, NgTemplateOutlet, RouterLink],
   template: `
     <h2>{{ titulo() }}</h2>
 
@@ -33,6 +34,9 @@ function alteracaoVazia(): AtualizacaoVenda {
 
     @switch (acao()) {
       @case ('listar') {
+        <div class="linha">
+          <button type="button" routerLink="/home/vendas/cadastrar">Cadastro de Venda e Pagamento</button>
+        </div>
         <form class="linha" (ngSubmit)="recarregar()">
           <label>Nome do cliente
             <input name="filtroNome" [(ngModel)]="filtroNome" placeholder="Parte do nome (vazio = todas)" maxlength="40" />
