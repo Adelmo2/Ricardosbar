@@ -4,14 +4,12 @@ import com.ricardosbar.dto.DadosAtualizacaoProdutoDto;
 import com.ricardosbar.dto.DadosCadastroProdutoDto;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Table(name = "produtos")
 @Entity(name = "Produto")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -55,4 +53,11 @@ public class Produto {
         this.bloqueado = 0;
     }
 
+    public void setDescricao(String descricao) {
+        this.descricao = descricao.toUpperCase();
+    }
+
+    public String getDescricao() {
+        return descricao.toUpperCase();
+    }
 }

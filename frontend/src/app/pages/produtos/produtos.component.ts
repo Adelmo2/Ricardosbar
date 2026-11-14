@@ -1,6 +1,7 @@
 import { Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ProdutoService, lerPagina, mensagemErro } from '../../core/api.service';
 import { Produto } from '../../core/models';
@@ -109,7 +110,11 @@ function produtoVazio(): Produto {
       <div class="tabela-wrap">
         <table>
           <thead>
-            <tr><th>ID</th><th>Descrição</th><th class="num">Preço</th><th>Casco</th><th>Situação</th><th>Ação</th></tr>
+            <tr>
+              <th>ID</th><th>Descrição</th><th class="num">Preço</th><th>Casco</th><th>Situação</th>
+              @if (acao() === 'listar') { <th>Alterar</th> }
+              <th>Ação</th>
+            </tr>
           </thead>
           <tbody>
             @for (p of lista(); track p.id) {
@@ -119,6 +124,17 @@ function produtoVazio(): Produto {
                 <td class="num">{{ p.preco | number: '1.2-2' }}</td>
                 <td>{{ p.casco === 1 ? 'Sim' : 'Não' }}</td>
                 <td>{{ p.bloqueado === 1 ? 'Inativo' : 'Ativo' }}</td>
+                @if (acao() === 'listar') {
+                  <td>
+                    <button class="secundario pequeno alterar" (click)="irParaAlterar(p.id!)" title="Alterar o produto">
+                      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                        <path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" fill="none" stroke="currentColor"
+                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      Alterar
+                    </button>
+                  </td>
+                }
                 <td>
                   @if (p.bloqueado === 1) {
                     <button class="secundario pequeno" (click)="ativar(p.id!)">Ativar</button>
@@ -128,7 +144,7 @@ function produtoVazio(): Produto {
                 </td>
               </tr>
             } @empty {
-              <tr><td colspan="6">Nenhum produto encontrado.</td></tr>
+              <tr><td [attr.colspan]="acao() === 'listar' ? 7 : 6">Nenhum produto encontrado.</td></tr>
             }
           </tbody>
         </table>
@@ -161,11 +177,18 @@ function produtoVazio(): Produto {
       }
     </ng-template>
   `,
+  styles: `
+    button.alterar { display: inline-flex; align-items: center; gap: 5px; }
+    button.alterar svg { flex-shrink: 0; }
+  `,
 })
 export class ProdutosComponent {
   private api = inject(ProdutoService);
+  private router = inject(Router);
 
   acao = input('listar');
+  /** Query param ?id= (usado pelo botão "Alterar" da listagem para abrir o produto já carregado) */
+  idParam = input<string | undefined>(undefined, { alias: 'id' });
   titulo = signal('');
   erro = signal('');
   sucesso = signal('');
@@ -181,11 +204,12 @@ export class ProdutosComponent {
   constructor() {
     effect(() => {
       const a = this.acao();
-      untracked(() => this.iniciar(a));
+      const idParam = this.idParam();
+      untracked(() => this.iniciar(a, idParam));
     });
   }
 
-  private iniciar(acao: string): void {
+  private iniciar(acao: string, idParam?: string): void {
     this.titulo.set(TITULOS[acao] ?? 'Produtos');
     this.limparMensagens();
     this.lista.set([]);
@@ -193,6 +217,16 @@ export class ProdutosComponent {
     this.pagina.set(0);
     this.form.set(acao === 'cadastrar' ? produtoVazio() : null);
     this.recarregar();
+    const idNum = Number(idParam);
+    if (acao === 'alterar' && idParam && Number.isInteger(idNum) && idNum > 0) {
+      this.id = idNum;
+      this.carregarParaAlterar();
+    }
+  }
+
+  /** Abre a tela de alteração com o produto da linha já carregado */
+  irParaAlterar(id: number): void {
+    this.router.navigate(['/home/produtos/alterar'], { queryParams: { id } });
   }
 
   private limparMensagens(): void {

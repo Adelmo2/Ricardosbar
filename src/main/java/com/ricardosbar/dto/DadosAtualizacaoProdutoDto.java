@@ -15,7 +15,7 @@ public record DadosAtualizacaoProdutoDto(
  {
     public DadosAtualizacaoProdutoDto(Produto produto) {
         this(produto.getId(),
-                produto.getDescricao(),
+                produto.getDescricao().toUpperCase(),
                 produto.getPreco(),
                 produto.getCasco(),
                 produto.getBloqueado()
