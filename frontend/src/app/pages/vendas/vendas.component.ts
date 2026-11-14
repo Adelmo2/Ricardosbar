@@ -149,7 +149,7 @@ function alteracaoVazia(): AtualizacaoVenda {
             <tr>
               <th>ID</th><th>Cliente</th><th>Produto</th>
               <th class="num">Qtde</th><th class="num">Valor</th><th class="num">Total</th>
-              <th>Data</th><th>Cupom</th><th>Pago</th><th class="num">Saldo do Cliente</th>
+              <th>Data</th>@if (acao() !== 'listar') { <th>Cupom</th> }<th>Pago</th><th class="num">Saldo do Cliente</th>
               <th>Alterar</th><th>Excluir</th>
             </tr>
           </thead>
@@ -164,9 +164,11 @@ function alteracaoVazia(): AtualizacaoVenda {
                   <td><input type="number" step="0.01" [(ngModel)]="edicao.valor" /></td>
                   <td class="num">{{ (edicao.quantidade ?? 0) * (edicao.valor ?? 0) | number: '1.2-2' }}</td>
                   <td>{{ v.data_pagamento | date: 'dd/MM/yyyy HH:mm' }}</td>
-                  <td>
-                    <select [(ngModel)]="edicao.cupom"><option [ngValue]="0">Não</option><option [ngValue]="1">Sim</option></select>
-                  </td>
+                  @if (acao() !== 'listar') {
+                    <td>
+                      <select [(ngModel)]="edicao.cupom"><option [ngValue]="0">Não</option><option [ngValue]="1">Sim</option></select>
+                    </td>
+                  }
                   <td>
                     <select [(ngModel)]="edicao.pago"><option [ngValue]="0">Não</option><option [ngValue]="1">Sim</option></select>
                   </td>
@@ -186,7 +188,7 @@ function alteracaoVazia(): AtualizacaoVenda {
                   <td class="num">{{ v.valor | number: '1.2-2' }}</td>
                   <td class="num">{{ v.total | number: '1.2-2' }}</td>
                   <td>{{ v.data_pagamento | date: 'dd/MM/yyyy HH:mm' }}</td>
-                  <td>{{ v.cupom === 1 ? 'Sim' : 'Não' }}</td>
+                  @if (acao() !== 'listar') { <td>{{ v.cupom === 1 ? 'Sim' : 'Não' }}</td> }
                   <td>{{ v.pago === 1 ? 'Sim' : 'Não' }}</td>
                   <td class="num">{{ v.saldo_pagar_cliente ?? 0 | number: '1.2-2' }}</td>
                   <td><button class="secundario pequeno" (click)="editar(v)">Alterar</button></td>
@@ -199,7 +201,7 @@ function alteracaoVazia(): AtualizacaoVenda {
           </tbody>
           @if (vendas().length) {
             <tfoot>
-              <tr><th colspan="5">Total geral</th><th class="num">{{ totalGeral() | number: '1.2-2' }}</th><th colspan="6"></th></tr>
+              <tr><th colspan="5">Total geral</th><th class="num">{{ totalGeral() | number: '1.2-2' }}</th><th [attr.colspan]="acao() === 'listar' ? 5 : 6"></th></tr>
             </tfoot>
           }
         </table>
