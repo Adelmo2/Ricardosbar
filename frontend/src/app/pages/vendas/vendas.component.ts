@@ -44,8 +44,15 @@ function alteracaoVazia(): AtualizacaoVenda {
           <label>Nome do produto
             <input name="filtroProduto" [(ngModel)]="filtroProduto" placeholder="Parte do nome (vazio = todos)" maxlength="40" />
           </label>
+          <label>Data da venda — de
+            <input name="filtroDataInicio" type="date" [(ngModel)]="filtroDataInicio" [max]="filtroDataFim" />
+          </label>
+          <label>até
+            <input name="filtroDataFim" type="date" [(ngModel)]="filtroDataFim" [min]="filtroDataInicio" />
+          </label>
           <button type="submit">Pesquisar</button>
-          <button type="button" class="secundario" (click)="limparFiltro()" [disabled]="!filtroNome && !filtroProduto">Limpar</button>
+          <button type="button" class="secundario" (click)="limparFiltro()"
+                  [disabled]="!filtroNome && !filtroProduto && !filtroDataInicio && !filtroDataFim">Limpar</button>
         </form>
         <ng-container *ngTemplateOutlet="tabela" />
       }
@@ -236,6 +243,9 @@ export class VendasComponent {
   filtroId: number | null = null;
   filtroNome = '';
   filtroProduto = '';
+  /** período da data da venda, no formato yyyy-MM-dd do input type="date" (vazio = sem limite) */
+  filtroDataInicio = '';
+  filtroDataFim = '';
   pesquisouCliente = false;
   nova: CadastroVenda = vendaVazia();
   alteracao: AtualizacaoVenda = alteracaoVazia();
@@ -258,6 +268,8 @@ export class VendasComponent {
     this.filtroId = null;
     this.filtroNome = '';
     this.filtroProduto = '';
+    this.filtroDataInicio = '';
+    this.filtroDataFim = '';
     this.pesquisouCliente = false;
     this.nova = vendaVazia();
     this.alteracao = alteracaoVazia();
@@ -289,8 +301,16 @@ export class VendasComponent {
       case 'listar':
         // com filtro, lista só as vendas dos clientes cujo nome contém o texto; sem filtro, todas
         // o filtro por produto (sozinho ou combinado com o de cliente) usa a pesquisa combinada da API
-        if (this.filtroProduto.trim()) obs = this.vendaApi.pesquisar(this.filtroNome, this.filtroProduto);
-        else obs = this.filtroNome.trim() ? this.vendaApi.porCliente(this.filtroNome) : this.vendaApi.listarTodas();
+        // o período de data da venda também usa a pesquisa combinada
+        if (this.filtroDataInicio && this.filtroDataFim && this.filtroDataFim < this.filtroDataInicio) {
+          this.vendas.set([]);
+          this.sucesso.set('');
+          this.erro.set('A data final não pode ser anterior à data inicial.');
+          return;
+        }
+        if (this.filtroProduto.trim() || this.filtroDataInicio || this.filtroDataFim) {
+          obs = this.vendaApi.pesquisar(this.filtroNome, this.filtroProduto, this.filtroDataInicio, this.filtroDataFim);
+        } else obs = this.filtroNome.trim() ? this.vendaApi.porCliente(this.filtroNome) : this.vendaApi.listarTodas();
         break;
       case 'por-cliente':
         if (this.filtroNome.trim()) { obs = this.vendaApi.porCliente(this.filtroNome); this.pesquisouCliente = true; }
@@ -309,6 +329,8 @@ export class VendasComponent {
   limparFiltro(): void {
     this.filtroNome = '';
     this.filtroProduto = '';
+    this.filtroDataInicio = '';
+    this.filtroDataFim = '';
     this.recarregar();
   }
 

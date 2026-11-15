@@ -91,8 +91,12 @@ export class VendaService {
     return this.http.get<Venda[]>(`${this.url}/consultarvendascliente/${encodeURIComponent(nome.trim())}`);
   }
   /** Vendas filtradas por parte do nome do cliente e/ou da descrição do produto (vazio = sem filtro) */
-  pesquisar(cliente: string, produto: string): Observable<Venda[]> {
-    return this.http.get<Venda[]>(`${this.url}/pesquisar`, { params: { cliente: cliente.trim(), produto: produto.trim() } });
+  pesquisar(cliente: string, produto: string, dataInicio = '', dataFim = ''): Observable<Venda[]> {
+    // datas no formato yyyy-MM-dd (valor do input type="date"); vazias não são enviadas (sem limite)
+    const params: Record<string, string> = { cliente: cliente.trim(), produto: produto.trim() };
+    if (dataInicio) params['dataInicio'] = dataInicio;
+    if (dataFim) params['dataFim'] = dataFim;
+    return this.http.get<Venda[]>(`${this.url}/pesquisar`, { params });
   }
   porProduto(id: number): Observable<Venda[]> {
     return this.http.get<Venda[]>(`${this.url}/consultarvendasproduto/${id}`);

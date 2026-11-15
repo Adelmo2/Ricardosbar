@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VendaRepository extends JpaRepository<Venda, Long> {
@@ -41,7 +42,10 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
     FROM Venda v
     WHERE UPPER(v.cliente.nome) LIKE UPPER(CONCAT('%', :cliente, '%'))
       AND UPPER(v.produto.descricao) LIKE UPPER(CONCAT('%', :produto, '%'))
+      AND v.data_pagamento >= :inicio
+      AND v.data_pagamento < :fim
     ORDER BY v.id DESC
     """)
-    List<DadosDetalhamentoVendaFullDto> pesquisar(@Param("cliente") String cliente, @Param("produto") String produto);
+    List<DadosDetalhamentoVendaFullDto> pesquisar(@Param("cliente") String cliente, @Param("produto") String produto,
+                                                  @Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 }

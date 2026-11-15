@@ -10,8 +10,11 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("vendas")
@@ -52,8 +55,10 @@ public class VendaController {
 
     @GetMapping("/pesquisar")
     public ResponseEntity pesquisar(@RequestParam(defaultValue = "") String cliente,
-                                    @RequestParam(defaultValue = "") String produto) {
-        return ResponseEntity.ok(dadosDetalhamentoVendasService.pesquisar(cliente, produto));
+                                    @RequestParam(defaultValue = "") String produto,
+                                    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+                                    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
+        return ResponseEntity.ok(dadosDetalhamentoVendasService.pesquisar(cliente, produto, dataInicio, dataFim));
     }
 
     @DeleteMapping("/excluir/{id}")
