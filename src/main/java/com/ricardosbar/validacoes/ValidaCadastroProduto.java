@@ -17,7 +17,7 @@ public class ValidaCadastroProduto {
             throw new validacaoException("A descrição do produto é obrigatória!..");
         }
 
-        if (dados.preco() < 0) {
+        if (dados.preco() < 0 && dados.casco() == 0) {
             throw new validacaoException("Preço inválido!...");
         }
     }

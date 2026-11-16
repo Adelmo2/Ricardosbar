@@ -55,7 +55,7 @@ public class CadastroDeVendasService {
             if (dados.quantidade() == 0) {
                 throw new validacaoException("Informe a quantidade!");
             }
-            if (dados.valor() == 0) {
+            if (dados.valor() == 0 && produto.getCasco() == 0) {
                 throw new validacaoException("Informe o valor!");
             }
         }
@@ -97,7 +97,7 @@ public class CadastroDeVendasService {
             if (venda.getQuantidade() == 0) {
                 throw new validacaoException("Informe a quantidade!");
             }
-            if (venda.getValor() == 0) {
+            if (venda.getValor() == 0 && venda.getProduto().getCasco() == 0) {
                 throw new validacaoException("Informe o valor!");
             }
             if (cliente.getLimite() > 0 && venda.getTotal() > totalAntigo && venda.getTotal() > cliente.getLimite()) {
