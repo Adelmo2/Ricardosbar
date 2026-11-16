@@ -35,7 +35,7 @@ function alteracaoVazia(): AtualizacaoVenda {
     @switch (acao()) {
       @case ('listar') {
         <div class="linha">
-          <button type="button" routerLink="/home/vendas/cadastrar">Cadastro de Venda e Pagamento</button>
+          <button type="button" routerLink="/home/vendas/cadastrar">Venda e Pagamento</button>
         </div>
         <form class="linha" (ngSubmit)="recarregar()">
           <label>Nome do cliente
