@@ -1,7 +1,20 @@
 import { Location, UpperCasePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { AuthService } from '../../core/auth.service';
+
+const CHAVE_ZOOM = 'ricardosbar.zoom';
+
+function lerZoomSalvo(): number {
+  try {
+    const z = Number(localStorage.getItem(CHAVE_ZOOM));
+    return z >= 0.5 && z <= 2 ? z : 1;
+  } catch {
+    return 1;
+  }
+}
 
 interface Botao {
   rotulo: string;
@@ -42,6 +55,12 @@ interface Botao {
           </svg>
           Voltar
         </button>
+        @if (telaVendasListar()) {
+          <button type="button" class="secundario zoom" (click)="alterarZoom(0.1)"
+                  [disabled]="zoom() >= ZOOM_MAX" title="Aumentar o zoom ({{ zoomPct() }}%)" aria-label="Aumentar o zoom">+</button>
+          <button type="button" class="secundario zoom" (click)="alterarZoom(-0.1)"
+                  [disabled]="zoom() <= ZOOM_MIN" title="Diminuir o zoom ({{ zoomPct() }}%)" aria-label="Diminuir o zoom">−</button>
+        }
         <router-outlet />
       </main>
     </div>
@@ -79,6 +98,11 @@ interface Botao {
       padding: 5px 12px 5px 6px; font-weight: 600;
     }
     .voltar svg { flex-shrink: 0; }
+    .zoom {
+      margin: 0 0 14px 8px; width: 34px; height: 30px; padding: 0;
+      font-size: 1.3rem; font-weight: 700; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
     @media (max-width: 760px) {
       .corpo { flex-direction: column; }
       nav { width: 100%; }
@@ -89,6 +113,34 @@ interface Botao {
 export class HomeComponent {
   auth = inject(AuthService);
   private location = inject(Location);
+  private router = inject(Router);
+
+  readonly ZOOM_MIN = 0.5;
+  readonly ZOOM_MAX = 2;
+
+  /** Os botões de zoom aparecem apenas na tela "Vendas — listar todas". */
+  private url = toSignal(
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd), map(() => this.router.url)),
+    { initialValue: this.router.url },
+  );
+  telaVendasListar = computed(() => this.url().split(/[?#]/)[0].endsWith('/vendas/listar'));
+
+  /** Zoom da página (1 = 100%), aplicado ao documento inteiro como o zoom do navegador. */
+  zoom = signal(lerZoomSalvo());
+  zoomPct = computed(() => Math.round(this.zoom() * 100));
+
+  constructor() {
+    effect(() => {
+      const z = this.zoom();
+      document.documentElement.style.zoom = z === 1 ? '' : String(z);
+      try { localStorage.setItem(CHAVE_ZOOM, String(z)); } catch { /* armazenamento indisponível */ }
+    });
+  }
+
+  alterarZoom(passo: number): void {
+    const novo = Math.round((this.zoom() + passo) * 10) / 10;
+    this.zoom.set(Math.min(this.ZOOM_MAX, Math.max(this.ZOOM_MIN, novo)));
+  }
 
   /** Retorna para a tela visitada anteriormente (histórico do navegador). */
   voltar(): void {
