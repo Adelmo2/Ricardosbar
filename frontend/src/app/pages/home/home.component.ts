@@ -58,7 +58,7 @@ interface Botao {
     .usuario button:hover { background: rgba(255,255,255,.15); }
     .corpo { display: flex; flex: 1; min-height: 0; }
     nav {
-      width: 203px; flex-shrink: 0; background: var(--sidebar); color: var(--sidebar-text);
+      width: 209px; flex-shrink: 0; background: var(--sidebar); color: var(--sidebar-text);
       padding: 12px; overflow-y: auto;
     }
     h3 { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; opacity: .7; margin: 14px 4px 6px; }
