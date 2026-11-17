@@ -97,7 +97,7 @@ export class HomeComponent {
 
   grupos: { titulo: string; destaque?: boolean; botoes: Botao[] }[] = [
     {
-      titulo: 'C L I E N T E S',
+      titulo: 'C L I E N T E',
       destaque: true,
       botoes: [
         { rotulo: 'Listar todos', rota: 'clientes/listar' },
@@ -109,7 +109,7 @@ export class HomeComponent {
       ],
     },
     {
-      titulo: 'P R O D U T O S',
+      titulo: 'P R O D U T O',
       destaque: true,
       botoes: [
         { rotulo: 'Listar todos', rota: 'produtos/listar' },
@@ -123,7 +123,7 @@ export class HomeComponent {
       ],
     },
     {
-      titulo: 'V E N D A S',
+      titulo: 'V E N D A',
       destaque: true,
       botoes: [
         { rotulo: 'Listar todas', rota: 'vendas/listar' },
