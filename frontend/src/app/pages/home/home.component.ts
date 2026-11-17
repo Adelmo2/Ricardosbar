@@ -58,17 +58,17 @@ interface Botao {
     .usuario button:hover { background: rgba(255,255,255,.15); }
     .corpo { display: flex; flex: 1; min-height: 0; }
     nav {
-      width: 250px; flex-shrink: 0; background: var(--sidebar); color: var(--sidebar-text);
+      width: 203px; flex-shrink: 0; background: var(--sidebar); color: var(--sidebar-text);
       padding: 12px; overflow-y: auto;
     }
-    h3 { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; opacity: .7; margin: 14px 4px 6px; }
+    h3 { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; opacity: .7; margin: 14px 4px 6px; }
     h3.destaque {
-      color: #00008b; font-weight: 700; opacity: 1; font-size: 1.05rem;
+      color: #00008b; font-weight: 700; opacity: 1; font-size: 1.26rem;
       background: #f5f0e1; padding: 5px 8px; border-radius: 4px; margin-left: 0; margin-right: 0;
     }
     .botao {
       display: flex; align-items: center; gap: 8px; padding: 7px 8px; margin-bottom: 4px;
-      border-radius: 6px; color: var(--sidebar-text); text-decoration: none; font-size: .9rem;
+      border-radius: 6px; color: var(--sidebar-text); text-decoration: none; font-size: 1.08rem;
       border: 1px solid rgba(255,255,255,.12);
     }
     .botao:hover { background: rgba(255,255,255,.08); }

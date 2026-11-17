@@ -37,7 +37,7 @@ function alteracaoVazia(): AtualizacaoVenda {
         <div class="linha">
           <button type="button" routerLink="/home/vendas/cadastrar">Venda e Pagamento</button>
         </div>
-        <form class="linha" (ngSubmit)="recarregar()">
+        <form class="linha pesquisa" (ngSubmit)="recarregar()">
           <label>Nome do cliente
             <input name="filtroNome" [(ngModel)]="filtroNome" placeholder="Parte do nome (vazio = todas)" maxlength="40" />
           </label>
@@ -151,7 +151,7 @@ function alteracaoVazia(): AtualizacaoVenda {
 
     <ng-template #tabela>
       <div class="tabela-wrap">
-        <table>
+        <table [class.lista-todas]="acao() === 'listar'">
           <thead>
             <tr>
               <th>ID</th><th>Cliente</th><th>Produto</th>
@@ -221,6 +221,9 @@ function alteracaoVazia(): AtualizacaoVenda {
     tr.editando input, tr.editando select { width: 90px; padding: 3px 6px; }
     td.acoes { display: flex; gap: 6px; }
     tr.negativa td { color: #0d47a1; font-weight: bold; }
+    /* Tela "listar todas": rótulos da pesquisa e cabeçalhos das colunas 40% maiores (.85rem -> 1.19rem). */
+    .pesquisa label, table.lista-todas th { font-size: 1.19rem; }
+    .pesquisa label input { font-size: .85rem; }
   `,
 })
 export class VendasComponent {
