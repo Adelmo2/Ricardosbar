@@ -182,7 +182,6 @@ export class HomeComponent {
         { rotulo: 'Vendas por cliente', rota: 'vendas/por-cliente' },
         { rotulo: 'Vendas por produto', rota: 'vendas/por-produto' },
         { rotulo: 'Venda e Pagamento', rota: 'vendas/cadastrar' },
-        { rotulo: 'Alterar venda', rota: 'vendas/alterar' },
       ],
     },
   ];
