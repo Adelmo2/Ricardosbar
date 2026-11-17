@@ -1,8 +1,6 @@
 import { Location, UpperCasePipe } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { filter, map } from 'rxjs';
+import { Component, HostListener, computed, effect, inject, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 
 const CHAVE_ZOOM = 'ricardosbar.zoom';
@@ -27,6 +25,16 @@ interface Botao {
   template: `
     <header>
       <strong>Ricardo's Bar</strong>
+      <span class="zooms">
+        <button type="button" class="secundario zoom" (click)="alterarZoom(0.1)"
+                [disabled]="zoom() >= ZOOM_MAX" title="Aumentar o zoom ({{ zoomPct() }}%)" aria-label="Aumentar o zoom">+</button>
+        <button type="button" class="secundario zoom" (click)="alterarZoom(-0.1)"
+                [disabled]="zoom() <= ZOOM_MIN" title="Diminuir o zoom ({{ zoomPct() }}%)" aria-label="Diminuir o zoom">−</button>
+        <button type="button" class="secundario tela-inteira" (click)="alternarTelaInteira()"
+                [title]="telaInteira() ? 'Sair da tela inteira' : 'Colocar o navegador em tela inteira'">
+          {{ telaInteira() ? 'Sair da Tela Inteira' : 'Tela Inteira' }}
+        </button>
+      </span>
       <span class="usuario">
         {{ auth.usuario()?.login | uppercase }}
         <button class="secundario pequeno" (click)="auth.sair()">Sair</button>
@@ -55,12 +63,6 @@ interface Botao {
           </svg>
           Voltar
         </button>
-        @if (telaVendasListar()) {
-          <button type="button" class="secundario zoom" (click)="alterarZoom(0.1)"
-                  [disabled]="zoom() >= ZOOM_MAX" title="Aumentar o zoom ({{ zoomPct() }}%)" aria-label="Aumentar o zoom">+</button>
-          <button type="button" class="secundario zoom" (click)="alterarZoom(-0.1)"
-                  [disabled]="zoom() <= ZOOM_MIN" title="Diminuir o zoom ({{ zoomPct() }}%)" aria-label="Diminuir o zoom">−</button>
-        }
         <router-outlet />
       </main>
     </div>
@@ -68,13 +70,15 @@ interface Botao {
   styles: `
     :host { display: flex; flex-direction: column; min-height: 100vh; }
     header {
-      display: flex; justify-content: space-between; align-items: center;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
       padding: 10px 16px; background: var(--primary); color: #fff;
     }
     header strong { font-size: 1.15rem; }
-    .usuario { display: flex; gap: 10px; align-items: center; }
-    .usuario button { color: #fff; border-color: #fff; }
-    .usuario button:hover { background: rgba(255,255,255,.15); }
+    .zooms { display: flex; gap: 8px; }
+    .usuario { display: flex; gap: 10px; align-items: center; justify-self: end; }
+    .usuario button, .zoom, .tela-inteira { color: #fff; border-color: #fff; }
+    .usuario button:hover, .zoom:hover:not(:disabled), .tela-inteira:hover { background: rgba(255,255,255,.15); }
+    .tela-inteira { height: 30px; padding: 0 12px; font-weight: 600; white-space: nowrap; }
     .corpo { display: flex; flex: 1; min-height: 0; }
     nav {
       width: 209px; flex-shrink: 0; background: var(--sidebar); color: var(--sidebar-text);
@@ -99,7 +103,7 @@ interface Botao {
     }
     .voltar svg { flex-shrink: 0; }
     .zoom {
-      margin: 0 0 14px 8px; width: 34px; height: 30px; padding: 0;
+      width: 34px; height: 30px; padding: 0;
       font-size: 1.3rem; font-weight: 700; line-height: 1;
       display: inline-flex; align-items: center; justify-content: center;
     }
@@ -113,17 +117,9 @@ interface Botao {
 export class HomeComponent {
   auth = inject(AuthService);
   private location = inject(Location);
-  private router = inject(Router);
 
   readonly ZOOM_MIN = 0.5;
   readonly ZOOM_MAX = 2;
-
-  /** Os botões de zoom aparecem apenas na tela "Vendas — listar todas". */
-  private url = toSignal(
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd), map(() => this.router.url)),
-    { initialValue: this.router.url },
-  );
-  telaVendasListar = computed(() => this.url().split(/[?#]/)[0].endsWith('/vendas/listar'));
 
   /** Zoom da página (1 = 100%), aplicado ao documento inteiro como o zoom do navegador. */
   zoom = signal(lerZoomSalvo());
@@ -135,6 +131,21 @@ export class HomeComponent {
       document.documentElement.style.zoom = z === 1 ? '' : String(z);
       try { localStorage.setItem(CHAVE_ZOOM, String(z)); } catch { /* armazenamento indisponível */ }
     });
+  }
+
+  /** Indica se o navegador está em tela inteira (também acompanha a saída pela tecla Esc). */
+  telaInteira = signal(!!document.fullscreenElement);
+
+  @HostListener('document:fullscreenchange')
+  aoMudarTelaInteira(): void {
+    this.telaInteira.set(!!document.fullscreenElement);
+  }
+
+  alternarTelaInteira(): void {
+    const pedido = document.fullscreenElement
+      ? document.exitFullscreen()
+      : document.documentElement.requestFullscreen();
+    pedido?.catch(() => { /* navegador recusou ou não suporta tela inteira */ });
   }
 
   alterarZoom(passo: number): void {
