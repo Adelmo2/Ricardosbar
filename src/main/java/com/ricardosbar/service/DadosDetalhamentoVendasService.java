@@ -21,12 +21,7 @@ public class DadosDetalhamentoVendasService {
         this.clienteRepository = clienteRepository;
         this.produtoRepository = produtoRepository;
     }
-//    public List<DadosDetalhamentoVendaDto> listaVendaDoCliente(Long id) {
-//        List<Venda> vendas = vendaRepository.vendasPorCliente(id);
-//        return vendas.stream()
-//                .map(DadosDetalhamentoVendaDto::new)
-//                .toList();
-//    }
+
 
     public List<DadosDetalhamentoVendaFullDto> listaVendaDoCliente(String nome) {
         if (clienteRepository.findByNomeContainingIgnoreCaseOrderByNome(nome.trim()).isEmpty()) {
@@ -47,6 +42,12 @@ public class DadosDetalhamentoVendasService {
         if (dataInicio != null && dataFim != null && dataFim.isBefore(dataInicio)) {
             throw new validacaoException("A data final não pode ser anterior à data inicial!");
         }
+
+        if (dataInicio == null && dataFim == null) {
+            throw new validacaoException("Favor informar um periodo!");
+        }
+
+
         LocalDateTime inicio = dataInicio != null ? dataInicio.atStartOfDay() : LocalDate.of(1900, 1, 1).atStartOfDay();
         // limite exclusivo no dia seguinte para incluir todas as vendas do dia final
         LocalDateTime fim = dataFim != null ? dataFim.plusDays(1).atStartOfDay() : LocalDate.of(9999, 1, 1).atStartOfDay();
