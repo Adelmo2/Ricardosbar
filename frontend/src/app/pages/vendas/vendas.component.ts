@@ -19,6 +19,12 @@ function vendaVazia(): CadastroVenda {
   return { id_clientes: null, id_produtos: null, quantidade: 1, valor: null, cupom: 0, pago: 0 };
 }
 
+/** Data local no formato yyyy-MM-dd do input type="date" (sem converter para UTC). */
+function dataInput(d: Date): string {
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
 function alteracaoVazia(): AtualizacaoVenda {
   return { id: null as unknown as number, quantidade: null, valor: null, cupom: null, pago: null };
 }
@@ -273,6 +279,14 @@ export class VendasComponent {
     this.filtroProduto = '';
     this.filtroDataInicio = '';
     this.filtroDataFim = '';
+    if (acao === 'listar') {
+      // ao abrir "listar todas", o período padrão é do mesmo dia de um ano atrás até hoje
+      const hoje = new Date();
+      const umAnoAtras = new Date(hoje);
+      umAnoAtras.setFullYear(hoje.getFullYear() - 1);
+      this.filtroDataInicio = dataInput(umAnoAtras);
+      this.filtroDataFim = dataInput(hoje);
+    }
     this.pesquisouCliente = false;
     this.nova = vendaVazia();
     this.alteracao = alteracaoVazia();
