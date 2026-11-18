@@ -2,7 +2,7 @@ import { Component, effect, inject, input, signal, untracked } from '@angular/co
 import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, finalize } from 'rxjs';
 import { ClienteService, mensagemErro } from '../../core/api.service';
 import { Cliente, SaldoCliente } from '../../core/models';
 
@@ -38,11 +38,11 @@ function clienteVazio(): Cliente {
           <label>Nome do cliente
             <input name="filtroNome" [(ngModel)]="filtroNome" placeholder="Parte do nome (vazio = todos)" maxlength="40" />
           </label>
-          <button type="submit">Pesquisar</button>
+          <button type="submit" [disabled]="carregando()">Pesquisar</button>
           <button type="button" class="secundario" (click)="limparFiltro()" [disabled]="!filtroNome">Limpar</button>
         </form>
         <div class="tabela-wrap">
-          <table>
+          <table [attr.aria-busy]="carregando()">
             <thead>
               <tr>
                 <th>ID</th><th>Nome</th><th>Telefone</th><th>Cidade</th><th>UF</th>
@@ -50,6 +50,13 @@ function clienteVazio(): Cliente {
               </tr>
             </thead>
             <tbody>
+              @if (carregando()) {
+                @for (l of linhasSkeleton; track l) {
+                  <tr class="skeleton-linha" aria-hidden="true">
+                    @for (c of colunasSkeleton; track $index) { <td><span class="skeleton"></span></td> }
+                  </tr>
+                }
+              } @else {
               @for (c of lista(); track c.id) {
                 <tr [class.inativo]="c.bloqueado === 1">
                   <td>{{ c.id }}</td><td>{{ c.nome }}</td><td>{{ c.telefone }}</td>
@@ -68,6 +75,7 @@ function clienteVazio(): Cliente {
                 </tr>
               } @empty {
                 <tr><td colspan="10">Nenhum cliente encontrado.</td></tr>
+              }
               }
             </tbody>
           </table>
@@ -186,6 +194,10 @@ export class ClientesComponent {
   nome = '';
   filtroNome = '';
   pesquisou = signal(false);
+  /** true enquanto a listagem/pesquisa está em andamento: a tabela mostra o "Aguarde" em skeleton */
+  carregando = signal(false);
+  readonly linhasSkeleton = [1, 2, 3, 4, 5, 6];
+  readonly colunasSkeleton = Array.from({ length: 10 });
   detalhes = signal<Cliente[]>([]);
   saldos = signal<SaldoCliente[]>([]);
   form = signal<Cliente | null>(null);
@@ -233,7 +245,8 @@ export class ClientesComponent {
   listar(): void {
     const filtro = this.filtroNome.trim();
     const obs = filtro ? this.api.consultar(filtro) : this.api.listarTodos();
-    this.executar(obs, (r) => this.lista.set(r));
+    this.carregando.set(true);
+    this.executar(obs.pipe(finalize(() => this.carregando.set(false))), (r) => this.lista.set(r));
   }
 
   limparFiltro(): void {

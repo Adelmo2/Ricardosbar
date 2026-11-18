@@ -93,3 +93,21 @@ tr.inativo td { color: var(--muted); }
 .detalhe { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; }
 .detalhe dt { color: var(--muted); }
 .detalhe dd { margin: 0; }
+
+/* "Aguarde" no estilo skeleton: linhas cinzas com brilho passando enquanto a pesquisa carrega */
+.skeleton {
+  display: block;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e8e3da 25%, #f5f2ec 37%, #e8e3da 63%);
+  background-size: 400% 100%;
+  animation: skeleton-brilho 1.4s ease infinite;
+}
+tr.skeleton-linha td { padding-top: 11px; padding-bottom: 11px; }
+@keyframes skeleton-brilho {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}

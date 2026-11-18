@@ -1,8 +1,8 @@
-import { Component, effect, inject, input, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, finalize } from 'rxjs';
 import { ProdutoService, lerPagina, mensagemErro } from '../../core/api.service';
 import { Produto } from '../../core/models';
 
@@ -33,7 +33,13 @@ function produtoVazio(): Produto {
 
     @switch (acao()) {
       @case ('listar') {
-        <div class="linha"><button class="secundario" (click)="listar()">Atualizar</button></div>
+        <form class="linha" (ngSubmit)="listar()">
+          <label>Nome do produto
+            <input name="filtroNome" [(ngModel)]="filtroNome" placeholder="Parte do nome (vazio = todos)" maxlength="50" />
+          </label>
+          <button type="submit" [disabled]="carregando()">Pesquisar</button>
+          <button type="button" class="secundario" (click)="limparFiltro()" [disabled]="!filtroNome">Limpar</button>
+        </form>
         <ng-container *ngTemplateOutlet="tabela" />
       }
 
@@ -50,7 +56,7 @@ function produtoVazio(): Produto {
       @case ('pesquisar') {
         <div class="linha">
           <label>Nome do produto <input [(ngModel)]="nome" (keyup.enter)="pesquisar()" /></label>
-          <button (click)="pesquisar()" [disabled]="!nome.trim()">Pesquisar</button>
+          <button (click)="pesquisar()" [disabled]="!nome.trim() || carregando()">Pesquisar</button>
         </div>
         <ng-container *ngTemplateOutlet="tabela" />
       }
@@ -108,7 +114,7 @@ function produtoVazio(): Produto {
 
     <ng-template #tabela>
       <div class="tabela-wrap">
-        <table>
+        <table [attr.aria-busy]="carregando()">
           <thead>
             <tr>
               <th>ID</th><th>Descrição</th><th class="num">Preço</th><th>Casco</th><th>Situação</th>
@@ -117,6 +123,13 @@ function produtoVazio(): Produto {
             </tr>
           </thead>
           <tbody>
+            @if (carregando()) {
+              @for (l of linhasSkeleton; track l) {
+                <tr class="skeleton-linha" aria-hidden="true">
+                  @for (c of colunasSkeleton(); track $index) { <td><span class="skeleton"></span></td> }
+                </tr>
+              }
+            } @else {
             @for (p of lista(); track p.id) {
               <tr [class.inativo]="p.bloqueado === 1">
                 <td>{{ p.id }}</td>
@@ -145,6 +158,7 @@ function produtoVazio(): Produto {
               </tr>
             } @empty {
               <tr><td [attr.colspan]="acao() === 'listar' ? 7 : 6">Nenhum produto encontrado.</td></tr>
+            }
             }
           </tbody>
         </table>
@@ -195,9 +209,15 @@ export class ProdutosComponent {
 
   id: number | null = null;
   nome = '';
+  /** filtro da tela "listar todos": parte do nome do produto (vazio = todos) */
+  filtroNome = '';
   lista = signal<Produto[]>([]);
   detalhe = signal<Produto | null>(null);
   form = signal<Produto | null>(null);
+  /** true enquanto a listagem/pesquisa por nome está em andamento: a tabela mostra o "Aguarde" em skeleton */
+  carregando = signal(false);
+  readonly linhasSkeleton = [1, 2, 3, 4, 5, 6];
+  colunasSkeleton = computed(() => Array.from({ length: this.acao() === 'listar' ? 7 : 6 }));
   pagina = signal(0);
   totalPaginas = signal(0);
 
@@ -215,6 +235,7 @@ export class ProdutosComponent {
     this.lista.set([]);
     this.detalhe.set(null);
     this.pagina.set(0);
+    this.filtroNome = '';
     this.form.set(acao === 'cadastrar' ? produtoVazio() : null);
     this.recarregar();
     const idNum = Number(idParam);
@@ -249,8 +270,17 @@ export class ProdutosComponent {
     }
   }
 
+  /** Lista os produtos cujo nome contém o filtro; sem filtro, lista todos */
   listar(): void {
-    this.executar(this.api.listarTodos(), (r) => this.lista.set(r));
+    const filtro = this.filtroNome.trim();
+    const obs = filtro ? this.api.pesquisarNome(filtro) : this.api.listarTodos();
+    this.carregando.set(true);
+    this.executar(obs.pipe(finalize(() => this.carregando.set(false))), (r) => this.lista.set(r));
+  }
+
+  limparFiltro(): void {
+    this.filtroNome = '';
+    this.listar();
   }
 
   irPagina(n: number): void {
@@ -264,7 +294,9 @@ export class ProdutosComponent {
   }
 
   pesquisar(): void {
-    this.executar(this.api.pesquisarNome(this.nome.trim()), (r) => this.lista.set(r));
+    this.carregando.set(true);
+    const obs = this.api.pesquisarNome(this.nome.trim()).pipe(finalize(() => this.carregando.set(false)));
+    this.executar(obs, (r) => this.lista.set(r));
   }
 
   consultar(): void {

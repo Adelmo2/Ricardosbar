@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, input, signal, untracked } from '@
 import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, finalize } from 'rxjs';
 import { ClienteService, ProdutoService, VendaService, mensagemErro } from '../../core/api.service';
 import { AtualizacaoVenda, CadastroVenda, Cliente, Produto, Venda } from '../../core/models';
 
@@ -56,9 +56,9 @@ function alteracaoVazia(): AtualizacaoVenda {
           <label>até
             <input name="filtroDataFim" type="date" [(ngModel)]="filtroDataFim" [min]="filtroDataInicio" />
           </label>
-          <button type="submit">Pesquisar</button>
+          <button type="submit" [disabled]="carregando()">Pesquisar</button>
           <button type="button" class="secundario" (click)="limparFiltro()"
-                  [disabled]="!filtroNome && !filtroProduto && !filtroDataInicio && !filtroDataFim">Limpar</button>
+                  [disabled]="!filtroNome && !filtroProduto">Limpar</button>
         </form>
         <ng-container *ngTemplateOutlet="tabela" />
       }
@@ -157,7 +157,7 @@ function alteracaoVazia(): AtualizacaoVenda {
 
     <ng-template #tabela>
       <div class="tabela-wrap">
-        <table [class.lista-todas]="acao() === 'listar'">
+        <table [class.lista-todas]="acao() === 'listar'" [attr.aria-busy]="carregando()">
           <thead>
             <tr>
               <th>ID</th><th>Cliente</th><th>Produto</th>
@@ -167,6 +167,13 @@ function alteracaoVazia(): AtualizacaoVenda {
             </tr>
           </thead>
           <tbody>
+            @if (carregando()) {
+              @for (l of linhasSkeleton; track l) {
+                <tr class="skeleton-linha" aria-hidden="true">
+                  @for (c of colunasSkeleton(); track $index) { <td><span class="skeleton"></span></td> }
+                </tr>
+              }
+            } @else {
             @for (v of vendas(); track v.id) {
               @if (editandoId() === v.id) {
                 <tr class="editando">
@@ -211,8 +218,9 @@ function alteracaoVazia(): AtualizacaoVenda {
             } @empty {
               <tr><td colspan="12">Nenhuma venda encontrada.</td></tr>
             }
+            }
           </tbody>
-          @if (vendas().length) {
+          @if (vendas().length && !carregando()) {
             <tfoot>
               <tr><th colspan="5">Total geral</th><th class="num">{{ totalGeral() | number: '1.2-2' }}</th><th [attr.colspan]="acao() === 'listar' ? 5 : 6"></th></tr>
             </tfoot>
@@ -247,6 +255,10 @@ export class VendasComponent {
   produtos = signal<Produto[]>([]);
   clientesAtivos = computed(() => this.clientes().filter((c) => c.bloqueado !== 1));
   produtosAtivos = computed(() => this.produtos().filter((p) => p.bloqueado !== 1));
+  /** true enquanto uma pesquisa está em andamento: a tabela mostra o "Aguarde" em skeleton */
+  carregando = signal(false);
+  readonly linhasSkeleton = [1, 2, 3, 4, 5, 6];
+  colunasSkeleton = computed(() => Array.from({ length: this.acao() === 'listar' ? 11 : 12 }));
   totalGeral = computed(() => this.vendas().reduce((s, v) => s + (v.total ?? 0), 0));
 
   filtroId: number | null = null;
@@ -336,7 +348,8 @@ export class VendasComponent {
     }
     if (!obs) return;
     this.limparMensagens();
-    obs.subscribe({
+    this.carregando.set(true);
+    obs.pipe(finalize(() => this.carregando.set(false))).subscribe({
       next: (r) => this.vendas.set(r),
       // a API responde com erro quando nenhum cliente casa com o nome: não deixa a lista anterior na tela
       error: (e) => { this.vendas.set([]); this.erro.set(mensagemErro(e)); },
@@ -346,8 +359,7 @@ export class VendasComponent {
   limparFiltro(): void {
     this.filtroNome = '';
     this.filtroProduto = '';
-    this.filtroDataInicio = '';
-    this.filtroDataFim = '';
+    // o período (Data da venda — de / até) é mantido de propósito
     this.recarregar();
   }
 
