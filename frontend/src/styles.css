@@ -26,6 +26,10 @@ html, body {
   font-size: 15px;
 }
 
+/* Altura da janela repassada à tela principal; usa % (e não 100vh) porque o zoom
+   aplicado ao documento multiplica unidades vh e cortaria o rodapé. */
+app-root { display: block; height: 100%; }
+
 h2 { margin: 0 0 16px; font-size: 1.3rem; }
 
 button, .btn {

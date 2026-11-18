@@ -68,7 +68,7 @@ interface Botao {
     </div>
   `,
   styles: `
-    :host { display: flex; flex-direction: column; min-height: 100vh; }
+    :host { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
     header {
       display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
       padding: 10px 16px; background: var(--primary); color: #fff;
@@ -96,7 +96,7 @@ interface Botao {
     }
     .botao:hover { background: rgba(255,255,255,.08); }
     .botao.ativo { background: var(--primary); border-color: var(--primary); }
-    main { flex: 1; padding: 20px; overflow-x: hidden; min-width: 0; }
+    main { flex: 1; padding: 20px; overflow-x: hidden; overflow-y: auto; min-width: 0; }
     .voltar {
       display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px;
       padding: 5px 12px 5px 6px; font-weight: 600;
