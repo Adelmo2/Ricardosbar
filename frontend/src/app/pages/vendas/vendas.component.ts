@@ -51,7 +51,7 @@ function alteracaoVazia(): AtualizacaoVenda {
             <input name="filtroProduto" [(ngModel)]="filtroProduto" placeholder="Parte do nome (vazio = todos)" maxlength="40" />
           </label>
           <label>Data da venda — de
-            <input name="filtroDataInicio" type="date" [(ngModel)]="filtroDataInicio" [min]="dataInicioMinima()" [max]="filtroDataFim" />
+            <input name="filtroDataInicio" type="date" [(ngModel)]="filtroDataInicio" [max]="filtroDataFim" />
           </label>
           <label>até
             <input name="filtroDataFim" type="date" [(ngModel)]="filtroDataFim" [min]="filtroDataInicio" />
@@ -267,12 +267,6 @@ export class VendasComponent {
   /** período da data da venda, no formato yyyy-MM-dd do input type="date" (vazio = sem limite) */
   filtroDataInicio = '';
   filtroDataFim = '';
-  /** a "Data da venda — de" não pode ser anterior a 2 anos atrás (mesmo dia) */
-  dataInicioMinima(): string {
-    const d = new Date();
-    d.setFullYear(d.getFullYear() - 2);
-    return dataInput(d);
-  }
   pesquisouCliente = false;
   nova: CadastroVenda = vendaVazia();
   alteracao: AtualizacaoVenda = alteracaoVazia();
@@ -298,11 +292,11 @@ export class VendasComponent {
     this.filtroDataInicio = '';
     this.filtroDataFim = '';
     if (acao === 'listar') {
-      // ao abrir "listar todas", o período padrão é do mesmo dia de um ano atrás até hoje
+      // ao abrir "listar todas", o período padrão é do mesmo dia de dois anos atrás até hoje
       const hoje = new Date();
-      const umAnoAtras = new Date(hoje);
-      umAnoAtras.setFullYear(hoje.getFullYear() - 1);
-      this.filtroDataInicio = dataInput(umAnoAtras);
+      const doisAnosAtras = new Date(hoje);
+      doisAnosAtras.setFullYear(hoje.getFullYear() - 2);
+      this.filtroDataInicio = dataInput(doisAnosAtras);
       this.filtroDataFim = dataInput(hoje);
     }
     this.pesquisouCliente = false;
@@ -341,12 +335,6 @@ export class VendasComponent {
           this.vendas.set([]);
           this.sucesso.set('');
           this.erro.set('A data final não pode ser anterior à data inicial.');
-          return;
-        }
-        if (this.filtroDataInicio && this.filtroDataInicio < this.dataInicioMinima()) {
-          this.vendas.set([]);
-          this.sucesso.set('');
-          this.erro.set('A data inicial deve ser de no máximo 2 anos atrás.');
           return;
         }
         if (this.filtroProduto.trim() || this.filtroDataInicio || this.filtroDataFim) {
