@@ -47,6 +47,10 @@ public class DadosDetalhamentoVendasService {
             throw new validacaoException("Favor informar um periodo!");
         }
 
+        if (dataInicio != null && dataInicio.isBefore(LocalDate.now().minusYears(2))) {
+            throw new validacaoException("A data inicial deve ser de no máximo 2 anos atrás!");
+        }
+
 
         LocalDateTime inicio = dataInicio != null ? dataInicio.atStartOfDay() : LocalDate.of(1900, 1, 1).atStartOfDay();
         // limite exclusivo no dia seguinte para incluir todas as vendas do dia final

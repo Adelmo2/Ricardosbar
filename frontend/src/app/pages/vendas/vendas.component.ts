@@ -51,7 +51,7 @@ function alteracaoVazia(): AtualizacaoVenda {
             <input name="filtroProduto" [(ngModel)]="filtroProduto" placeholder="Parte do nome (vazio = todos)" maxlength="40" />
           </label>
           <label>Data da venda — de
-            <input name="filtroDataInicio" type="date" [(ngModel)]="filtroDataInicio" [max]="filtroDataFim" />
+            <input name="filtroDataInicio" type="date" [(ngModel)]="filtroDataInicio" [min]="dataInicioMinima()" [max]="filtroDataFim" />
           </label>
           <label>até
             <input name="filtroDataFim" type="date" [(ngModel)]="filtroDataFim" [min]="filtroDataInicio" />
@@ -267,6 +267,12 @@ export class VendasComponent {
   /** período da data da venda, no formato yyyy-MM-dd do input type="date" (vazio = sem limite) */
   filtroDataInicio = '';
   filtroDataFim = '';
+  /** a "Data da venda — de" não pode ser anterior a 2 anos atrás (mesmo dia) */
+  dataInicioMinima(): string {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 2);
+    return dataInput(d);
+  }
   pesquisouCliente = false;
   nova: CadastroVenda = vendaVazia();
   alteracao: AtualizacaoVenda = alteracaoVazia();
@@ -335,6 +341,12 @@ export class VendasComponent {
           this.vendas.set([]);
           this.sucesso.set('');
           this.erro.set('A data final não pode ser anterior à data inicial.');
+          return;
+        }
+        if (this.filtroDataInicio && this.filtroDataInicio < this.dataInicioMinima()) {
+          this.vendas.set([]);
+          this.sucesso.set('');
+          this.erro.set('A data inicial deve ser de no máximo 2 anos atrás.');
           return;
         }
         if (this.filtroProduto.trim() || this.filtroDataInicio || this.filtroDataFim) {
