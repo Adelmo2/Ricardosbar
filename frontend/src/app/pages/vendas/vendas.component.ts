@@ -89,18 +89,18 @@ function alteracaoVazia(): AtualizacaoVenda {
         <form class="cartao" (ngSubmit)="cadastrar()">
           <div class="form-grid">
             <label>Cliente *
-              <select name="cliente" [(ngModel)]="nova.id_clientes" required>
+              <select name="cliente" class="sel-cliente" [(ngModel)]="nova.id_clientes" required>
                 <option [ngValue]="null">Selecione...</option>
                 @for (c of clientesAtivos(); track c.id) {
-                  <option [ngValue]="c.id">{{ c.id }} — {{ c.nome }} (saldo: {{ (c.saldo_pagar ?? 0) | number: '1.2-2' }})</option>
+                  <option [ngValue]="c.id">{{ c.nome }} (saldo: {{ (c.saldo_pagar ?? 0) | number: '1.2-2' }})</option>
                 }
               </select>
             </label>
             <label>Produto *
-              <select name="produto" [(ngModel)]="nova.id_produtos" (ngModelChange)="aoEscolherProduto($event)" required>
+              <select name="produto" class="sel-produto" [(ngModel)]="nova.id_produtos" (ngModelChange)="aoEscolherProduto($event)" required>
                 <option [ngValue]="null">Selecione...</option>
                 @for (p of produtosAtivos(); track p.id) {
-                  <option [ngValue]="p.id">{{ p.id }} — {{ p.descricao }}</option>
+                  <option [ngValue]="p.id">{{ p.descricao }}</option>
                 }
               </select>
             </label>
@@ -119,7 +119,7 @@ function alteracaoVazia(): AtualizacaoVenda {
           </div>
           <p class="dica">
             Total: <strong>{{ (nova.quantidade ?? 0) * (nova.valor ?? 0) | number: '1.2-2' }}</strong>
-            · O produto de ID 1 é tratado pela API como pagamento (abate o valor do saldo do cliente).
+            · O produto <strong>{{ produtoPagamento() ?? 'de ID 1' }}</strong> é tratado pela API como pagamento (abate o valor do saldo do cliente).
           </p>
           <button type="submit" [disabled]="!nova.id_clientes || !nova.id_produtos">Cadastrar venda</button>
         </form>
@@ -234,6 +234,12 @@ function alteracaoVazia(): AtualizacaoVenda {
     tr.editando td { background: #fff7e8; }
     tr.editando input, tr.editando select { width: 90px; padding: 3px 6px; }
     td.acoes { display: flex; gap: 6px; }
+    /* Tela "cadastrar": lista de clientes em negrito e com a fonte 20% maior. */
+    select.sel-cliente { font-size: 1.2em; font-weight: bold; }
+    select.sel-cliente option { font-weight: bold; }
+    /* Tela "cadastrar": lista de produtos em negrito e com a fonte 15% maior. */
+    select.sel-produto { font-size: 1.15em; font-weight: bold; }
+    select.sel-produto option { font-weight: bold; }
     tr.negativa td { color: #0d47a1; font-weight: bold; }
     /* Tela "listar todas": rótulos da pesquisa e cabeçalhos das colunas 40% maiores (.85rem -> 1.19rem). */
     .pesquisa label, table.lista-todas th { font-size: 1.19rem; }
@@ -253,8 +259,18 @@ export class VendasComponent {
   vendas = signal<Venda[]>([]);
   clientes = signal<Cliente[]>([]);
   produtos = signal<Produto[]>([]);
-  clientesAtivos = computed(() => this.clientes().filter((c) => c.bloqueado !== 1));
-  produtosAtivos = computed(() => this.produtos().filter((p) => p.bloqueado !== 1));
+  clientesAtivos = computed(() =>
+    this.clientes()
+      .filter((c) => c.bloqueado !== 1)
+      .sort((a, b) => (a.nome ?? '').localeCompare(b.nome ?? '', 'pt-BR', { sensitivity: 'base' })),
+  );
+  // nome do produto de ID 1, que a API trata como pagamento (citado na dica da tela "cadastrar")
+  produtoPagamento = computed(() => this.produtos().find((p) => p.id === 1)?.descricao);
+  produtosAtivos = computed(() =>
+    this.produtos()
+      .filter((p) => p.bloqueado !== 1)
+      .sort((a, b) => (a.descricao ?? '').localeCompare(b.descricao ?? '', 'pt-BR', { sensitivity: 'base' })),
+  );
   /** true enquanto uma pesquisa está em andamento: a tabela mostra o "Aguarde" em skeleton */
   carregando = signal(false);
   readonly linhasSkeleton = [1, 2, 3, 4, 5, 6];
