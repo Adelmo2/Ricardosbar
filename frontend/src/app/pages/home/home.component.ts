@@ -160,6 +160,16 @@ export class HomeComponent {
 
   grupos: { titulo: string; destaque?: boolean; botoes: Botao[] }[] = [
     {
+      titulo: 'V E N D A',
+      destaque: true,
+      botoes: [
+        { rotulo: 'Listar todas', rota: 'vendas/listar' },
+        { rotulo: 'Vendas por cliente', rota: 'vendas/por-cliente' },
+        { rotulo: 'Vendas por produto', rota: 'vendas/por-produto' },
+        { rotulo: 'Venda e Pagamento', rota: 'vendas/cadastrar' },
+      ],
+    },
+    {
       titulo: 'C L I E N T E',
       destaque: true,
       botoes: [
@@ -183,16 +193,6 @@ export class HomeComponent {
         { rotulo: 'Alterar', rota: 'produtos/alterar' },
         { rotulo: 'Ativar', rota: 'produtos/ativar' },
         { rotulo: 'Inativar', rota: 'produtos/inativar' },
-      ],
-    },
-    {
-      titulo: 'V E N D A',
-      destaque: true,
-      botoes: [
-        { rotulo: 'Listar todas', rota: 'vendas/listar' },
-        { rotulo: 'Vendas por cliente', rota: 'vendas/por-cliente' },
-        { rotulo: 'Vendas por produto', rota: 'vendas/por-produto' },
-        { rotulo: 'Venda e Pagamento', rota: 'vendas/cadastrar' },
       ],
     },
   ];
