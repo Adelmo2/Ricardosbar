@@ -241,12 +241,14 @@ export class ClientesComponent {
     obs.subscribe({ next: ok, error: (e) => this.erro.set(mensagemErro(e)) });
   }
 
-  /** Lista os clientes cujo nome contém o filtro; sem filtro, lista todos */
+  /** Lista os clientes cujo nome contém o filtro (sem filtro, lista todos), do cadastro mais recente ao mais antigo */
   listar(): void {
     const filtro = this.filtroNome.trim();
     const obs = filtro ? this.api.consultar(filtro) : this.api.listarTodos();
     this.carregando.set(true);
-    this.executar(obs.pipe(finalize(() => this.carregando.set(false))), (r) => this.lista.set(r));
+    this.executar(obs.pipe(finalize(() => this.carregando.set(false))), (r) =>
+      this.lista.set([...r].sort((a, b) => (b.id ?? 0) - (a.id ?? 0))),
+    );
   }
 
   limparFiltro(): void {
