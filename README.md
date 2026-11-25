@@ -103,7 +103,7 @@ ricardosbar/
 
 A documentação interativa fica disponível em **http://localhost:8080/swagger-ui.html** com a aplicação rodando.
 
-## Ambiente de desenvolvimento (servidor oracle-adelmo)
+## Ambiente de desenvolvimento (servidor PC-ADELMO)
 
 Já preparado nesta máquina: JDK 17, Node 24 e um Postgres 17 só para dev, separado do banco de produção.
 
@@ -111,7 +111,7 @@ Já preparado nesta máquina: JDK 17, Node 24 e um Postgres 17 só para dev, sep
 - **Dados de teste**: `dev/seed.sql` cria o usuário `dev`/`dev`, o produto 1 (pagamento), alguns produtos e um cliente. Pode ser reaplicado sem duplicar:
   `sudo docker exec -i ricardosbar-dev-db psql -U postgres -d ricardosbar < dev/seed.sql`
 - **Backend**: `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`
-- **Frontend**: `cd frontend && npm start` e acesse `https://oracle-adelmo.halfbeak-shaula.ts.net:4200` (pela tailnet) ou `http://localhost:4200`.
+- **Frontend**: `cd frontend && npm start` e acesse `https://pc-adelmo.halfbeak-shaula.ts.net:4200` (pela tailnet) ou `http://localhost:4200`.
 - **Testes**: `./mvnw test -Dspring.profiles.active=dev`
 
 ## Como executar
