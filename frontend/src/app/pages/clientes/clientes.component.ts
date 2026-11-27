@@ -16,7 +16,10 @@ const TITULOS: Record<string, string> = {
   inativar: 'Clientes — inativar',
 };
 
-type CampoOrdenacao = 'id' | 'nome' | 'saldo_pagar';
+type CampoTexto = 'nome' | 'telefone' | 'cidade' | 'uf';
+type CampoNumero = 'id' | 'limite' | 'saldo_pagar' | 'bloqueado';
+type CampoOrdenacao = CampoTexto | CampoNumero;
+const CAMPOS_TEXTO: readonly CampoOrdenacao[] = ['nome', 'telefone', 'cidade', 'uf'];
 
 function clienteVazio(): Cliente {
   return {
@@ -49,10 +52,13 @@ function clienteVazio(): Cliente {
               <tr>
                 <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'id', rotulo: 'ID', num: false }" />
                 <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'nome', rotulo: 'Nome', num: false }" />
-                <th>Telefone</th><th>Cidade</th><th>UF</th>
-                <th class="num">Limite</th>
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'telefone', rotulo: 'Telefone', num: false }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'cidade', rotulo: 'Cidade', num: false }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'uf', rotulo: 'UF', num: false }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'limite', rotulo: 'Limite', num: true }" />
                 <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'saldo_pagar', rotulo: 'Saldo a pagar', num: true }" />
-                <th>Situação</th><th>Alterar</th><th>Ação</th>
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'bloqueado', rotulo: 'Situação', num: false }" />
+                <th>Alterar</th><th>Ação</th>
               </tr>
             </thead>
             <tbody>
@@ -222,9 +228,9 @@ export class ClientesComponent {
     const campo = this.ordemCampo();
     const fator = this.ordemDir() === 'asc' ? 1 : -1;
     return [...this.lista()].sort((a, b) => {
-      const r = campo === 'nome'
-        ? (a.nome ?? '').localeCompare(b.nome ?? '', 'pt-BR', { sensitivity: 'base' })
-        : (a[campo] ?? 0) - (b[campo] ?? 0);
+      const r = CAMPOS_TEXTO.includes(campo)
+        ? (a[campo as CampoTexto] ?? '').localeCompare(b[campo as CampoTexto] ?? '', 'pt-BR', { sensitivity: 'base', numeric: true })
+        : (a[campo as CampoNumero] ?? 0) - (b[campo as CampoNumero] ?? 0);
       // desempate estável pelo ID, para a ordem não "pular" entre cliques
       return (r || (a.id ?? 0) - (b.id ?? 0)) * fator;
     });
