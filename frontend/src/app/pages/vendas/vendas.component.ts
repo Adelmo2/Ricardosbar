@@ -15,6 +15,10 @@ const TITULOS: Record<string, string> = {
   excluir: 'Vendas — excluir',
 };
 
+type CampoTexto = 'nome_cliente' | 'descricao_produto';
+type CampoNumero = 'id' | 'quantidade' | 'valor' | 'total' | 'saldo_pagar_cliente';
+type CampoOrdenacao = CampoTexto | CampoNumero | 'data_pagamento';
+
 function vendaVazia(): CadastroVenda {
   return { id_clientes: null, id_produtos: null, quantidade: 1, valor: null, cupom: 0, pago: 0 };
 }
@@ -158,14 +162,34 @@ function alteracaoVazia(): AtualizacaoVenda {
       }
     }
 
+    <ng-template #thOrdenavel let-campo="campo" let-rotulo="rotulo" let-classe="classe">
+      <th [class]="'ordenavel ' + classe" tabindex="0" role="columnheader"
+          [attr.aria-sort]="ordemCampo() === campo ? (ordemDir() === 'asc' ? 'ascending' : 'descending') : 'none'"
+          [title]="'Ordenar por ' + rotulo"
+          (click)="ordenarPor(campo)" (keydown.enter)="ordenarPor(campo)" (keydown.space)="$event.preventDefault(); ordenarPor(campo)">
+        {{ rotulo }}<span class="seta" aria-hidden="true">{{ ordemCampo() === campo ? (ordemDir() === 'asc' ? '▲' : '▼') : '↕' }}</span>
+      </th>
+    </ng-template>
+
     <ng-template #tabela>
       <div class="tabela-wrap">
         <table [class.lista-todas]="acao() === 'listar'" [attr.aria-busy]="carregando()">
           <thead>
             <tr>
-              <th>ID</th><th>Cliente</th><th>Produto</th>
-              <th class="num">Qtde</th><th class="num">Valor</th><th class="num">Total</th>
-              <th>Data</th>@if (acao() !== 'listar') { <th>Cupom</th><th>Pago</th> }<th class="num col-saldo">Saldo do Cliente</th>
+              @if (acao() === 'listar') {
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'id', rotulo: 'ID', classe: '' }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'nome_cliente', rotulo: 'Cliente', classe: '' }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'descricao_produto', rotulo: 'Produto', classe: '' }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'quantidade', rotulo: 'Qtde', classe: 'num' }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'valor', rotulo: 'Valor', classe: 'num' }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'total', rotulo: 'Total', classe: 'num' }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'data_pagamento', rotulo: 'Data', classe: '' }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'saldo_pagar_cliente', rotulo: 'Saldo do Cliente', classe: 'num col-saldo' }" />
+              } @else {
+                <th>ID</th><th>Cliente</th><th>Produto</th>
+                <th class="num">Qtde</th><th class="num">Valor</th><th class="num">Total</th>
+                <th>Data</th><th>Cupom</th><th>Pago</th><th class="num">Saldo do Cliente</th>
+              }
               <th>Alterar</th><th>Excluir</th>
             </tr>
           </thead>
@@ -177,7 +201,7 @@ function alteracaoVazia(): AtualizacaoVenda {
                 </tr>
               }
             } @else {
-            @for (v of vendas(); track v.id) {
+            @for (v of vendasOrdenadas(); track v.id) {
               @if (editandoId() === v.id) {
                 <tr class="editando">
                   <td>{{ v.id }}</td>
@@ -285,6 +309,30 @@ export class VendasComponent {
   carregando = signal(false);
   readonly linhasSkeleton = [1, 2, 3, 4, 5, 6];
   colunasSkeleton = computed(() => Array.from({ length: this.acao() === 'listar' ? 10 : 12 }));
+  /**
+   * Ordenação da tela "listar todas" (clique no cabeçalho alterna crescente/decrescente).
+   * null = ordem em que a API devolveu; as outras telas não ordenam.
+   */
+  ordemCampo = signal<CampoOrdenacao | null>(null);
+  ordemDir = signal<'asc' | 'desc'>('asc');
+  vendasOrdenadas = computed(() => {
+    const campo = this.ordemCampo();
+    const lista = this.vendas();
+    if (!campo || this.acao() !== 'listar') return lista;
+    const fator = this.ordemDir() === 'asc' ? 1 : -1;
+    return [...lista].sort((a, b) => {
+      let r: number;
+      if (campo === 'nome_cliente' || campo === 'descricao_produto') {
+        r = (a[campo] ?? '').localeCompare(b[campo] ?? '', 'pt-BR', { sensitivity: 'base', numeric: true });
+      } else if (campo === 'data_pagamento') {
+        r = (Date.parse(a.data_pagamento) || 0) - (Date.parse(b.data_pagamento) || 0);
+      } else {
+        r = (a[campo] ?? 0) - (b[campo] ?? 0);
+      }
+      // desempate estável pelo ID, para a ordem não "pular" entre cliques
+      return (r || a.id - b.id) * fator;
+    });
+  });
   totalGeral = computed(() => this.vendas().reduce((s, v) => s + (v.total ?? 0), 0));
 
   filtroId: number | null = null;
@@ -312,6 +360,8 @@ export class VendasComponent {
     this.limparMensagens();
     this.vendas.set([]);
     this.editandoId.set(null);
+    this.ordemCampo.set(null);
+    this.ordemDir.set('asc');
     this.filtroId = null;
     this.filtroNome = '';
     this.filtroProduto = '';
@@ -420,6 +470,16 @@ export class VendasComponent {
   }
 
   /** Coluna "Alterar": abre a linha em modo de edição */
+  /** Clique no cabeçalho: mesma coluna inverte a direção; coluna nova começa crescente */
+  ordenarPor(campo: CampoOrdenacao): void {
+    if (this.ordemCampo() === campo) {
+      this.ordemDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      this.ordemCampo.set(campo);
+      this.ordemDir.set('asc');
+    }
+  }
+
   editar(v: Venda): void {
     this.limparMensagens();
     this.edicao = { id: v.id, quantidade: v.quantidade, valor: v.valor, cupom: v.cupom, pago: v.pago };
