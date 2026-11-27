@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,6 +15,8 @@ const TITULOS: Record<string, string> = {
   ativar: 'Clientes — ativar',
   inativar: 'Clientes — inativar',
 };
+
+type CampoOrdenacao = 'id' | 'nome' | 'saldo_pagar';
 
 function clienteVazio(): Cliente {
   return {
@@ -45,8 +47,12 @@ function clienteVazio(): Cliente {
           <table [attr.aria-busy]="carregando()">
             <thead>
               <tr>
-                <th>ID</th><th>Nome</th><th>Telefone</th><th>Cidade</th><th>UF</th>
-                <th class="num">Limite</th><th class="num">Saldo a pagar</th><th>Situação</th><th>Alterar</th><th>Ação</th>
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'id', rotulo: 'ID', num: false }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'nome', rotulo: 'Nome', num: false }" />
+                <th>Telefone</th><th>Cidade</th><th>UF</th>
+                <th class="num">Limite</th>
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'saldo_pagar', rotulo: 'Saldo a pagar', num: true }" />
+                <th>Situação</th><th>Alterar</th><th>Ação</th>
               </tr>
             </thead>
             <tbody>
@@ -57,7 +63,7 @@ function clienteVazio(): Cliente {
                   </tr>
                 }
               } @else {
-              @for (c of lista(); track c.id) {
+              @for (c of listaOrdenada(); track c.id) {
                 <tr [class.inativo]="c.bloqueado === 1">
                   <td>{{ c.id }}</td><td>{{ c.nome }}</td><td>{{ c.telefone }}</td>
                   <td>{{ c.cidade }}</td><td>{{ c.uf }}</td>
@@ -78,6 +84,15 @@ function clienteVazio(): Cliente {
               }
               }
             </tbody>
+            @if (!carregando() && lista().length) {
+              <tfoot>
+                <tr class="total">
+                  <td colspan="6">Total ({{ lista().length }} {{ lista().length === 1 ? 'cliente' : 'clientes' }})</td>
+                  <td class="num">{{ totalSaldo() | number: '1.2-2' }}</td>
+                  <td colspan="3"></td>
+                </tr>
+              </tfoot>
+            }
           </table>
         </div>
       }
@@ -153,6 +168,15 @@ function clienteVazio(): Cliente {
       }
     }
 
+    <ng-template #thOrdenavel let-campo="campo" let-rotulo="rotulo" let-num="num">
+      <th class="ordenavel" [class.num]="num" tabindex="0" role="columnheader"
+          [attr.aria-sort]="ordemCampo() === campo ? (ordemDir() === 'asc' ? 'ascending' : 'descending') : 'none'"
+          [title]="'Ordenar por ' + rotulo"
+          (click)="ordenarPor(campo)" (keydown.enter)="ordenarPor(campo)" (keydown.space)="$event.preventDefault(); ordenarPor(campo)">
+        {{ rotulo }}<span class="seta" aria-hidden="true">{{ ordemCampo() === campo ? (ordemDir() === 'asc' ? '▲' : '▼') : '↕' }}</span>
+      </th>
+    </ng-template>
+
     <ng-template #formulario>
       @if (form(); as f) {
         <form class="cartao" (ngSubmit)="salvar()">
@@ -191,6 +215,22 @@ export class ClientesComponent {
 
   id: number | null = null;
   lista = signal<Cliente[]>([]);
+  /** Coluna e direção da ordenação da grade (clique no cabeçalho alterna crescente/decrescente) */
+  ordemCampo = signal<CampoOrdenacao>('id');
+  ordemDir = signal<'asc' | 'desc'>('desc');
+  listaOrdenada = computed(() => {
+    const campo = this.ordemCampo();
+    const fator = this.ordemDir() === 'asc' ? 1 : -1;
+    return [...this.lista()].sort((a, b) => {
+      const r = campo === 'nome'
+        ? (a.nome ?? '').localeCompare(b.nome ?? '', 'pt-BR', { sensitivity: 'base' })
+        : (a[campo] ?? 0) - (b[campo] ?? 0);
+      // desempate estável pelo ID, para a ordem não "pular" entre cliques
+      return (r || (a.id ?? 0) - (b.id ?? 0)) * fator;
+    });
+  });
+  /** Soma da coluna "Saldo a pagar" dos clientes exibidos (respeita o filtro por nome) */
+  totalSaldo = computed(() => this.lista().reduce((s, c) => s + (c.saldo_pagar ?? 0), 0));
   nome = '';
   filtroNome = '';
   pesquisou = signal(false);
@@ -241,14 +281,22 @@ export class ClientesComponent {
     obs.subscribe({ next: ok, error: (e) => this.erro.set(mensagemErro(e)) });
   }
 
-  /** Lista os clientes cujo nome contém o filtro (sem filtro, lista todos), do cadastro mais recente ao mais antigo */
+  /** Lista os clientes cujo nome contém o filtro (sem filtro, lista todos); a ordem segue o cabeçalho escolhido */
   listar(): void {
     const filtro = this.filtroNome.trim();
     const obs = filtro ? this.api.consultar(filtro) : this.api.listarTodos();
     this.carregando.set(true);
-    this.executar(obs.pipe(finalize(() => this.carregando.set(false))), (r) =>
-      this.lista.set([...r].sort((a, b) => (b.id ?? 0) - (a.id ?? 0))),
-    );
+    this.executar(obs.pipe(finalize(() => this.carregando.set(false))), (r) => this.lista.set(r));
+  }
+
+  /** Clique no cabeçalho: mesma coluna inverte a direção; coluna nova começa crescente (ID começa decrescente) */
+  ordenarPor(campo: CampoOrdenacao): void {
+    if (this.ordemCampo() === campo) {
+      this.ordemDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      this.ordemCampo.set(campo);
+      this.ordemDir.set(campo === 'id' ? 'desc' : 'asc');
+    }
   }
 
   limparFiltro(): void {

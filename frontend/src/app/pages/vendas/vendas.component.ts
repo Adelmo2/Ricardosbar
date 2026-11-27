@@ -104,7 +104,10 @@ function alteracaoVazia(): AtualizacaoVenda {
                 }
               </select>
             </label>
-            <label>Quantidade <input name="quantidade" type="number" step="0.01" [(ngModel)]="nova.quantidade" /></label>
+            <label>Quantidade
+              <input name="quantidade" type="number" step="1" min="1" inputmode="numeric"
+                     [(ngModel)]="nova.quantidade" (keydown)="somenteInteiro($event)" (paste)="colarSomenteInteiro($event)" />
+            </label>
             <label>Valor unitário <input name="valor" type="number" step="0.01" [(ngModel)]="nova.valor" /></label>
             <label>Cupom
               <select name="cupom" [(ngModel)]="nova.cupom">
@@ -121,7 +124,7 @@ function alteracaoVazia(): AtualizacaoVenda {
             Total: <strong>{{ (nova.quantidade ?? 0) * (nova.valor ?? 0) | number: '1.2-2' }}</strong>
             · O produto <strong>{{ produtoPagamento() ?? 'de ID 1' }}</strong> é tratado pela API como pagamento (abate o valor do saldo do cliente).
           </p>
-          <button type="submit" [disabled]="!nova.id_clientes || !nova.id_produtos">Cadastrar venda</button>
+          <button type="submit" [disabled]="!nova.id_clientes || !nova.id_produtos || !quantidadeValida(nova.quantidade)">Cadastrar venda</button>
         </form>
       }
 
@@ -130,7 +133,7 @@ function alteracaoVazia(): AtualizacaoVenda {
           <p class="dica">Informe o ID da venda e apenas os campos que deseja alterar. Também é possível alterar pela coluna "Alterar" na lista de vendas.</p>
           <div class="form-grid">
             <label>ID da venda * <input name="id" type="number" [(ngModel)]="alteracao.id" required /></label>
-            <label>Quantidade <input name="quantidade" type="number" step="0.01" [(ngModel)]="alteracao.quantidade" /></label>
+            <label>Quantidade <input name="quantidade" type="number" step="1" min="1" inputmode="numeric" (keydown)="somenteInteiro($event)" (paste)="colarSomenteInteiro($event)" [(ngModel)]="alteracao.quantidade" placeholder="(manter)" /></label>
             <label>Valor unitário <input name="valor" type="number" step="0.01" [(ngModel)]="alteracao.valor" /></label>
             <label>Cupom
               <select name="cupom" [(ngModel)]="alteracao.cupom">
@@ -143,7 +146,7 @@ function alteracaoVazia(): AtualizacaoVenda {
               </select>
             </label>
           </div>
-          <button type="submit" [disabled]="!alteracao.id">Salvar alteração</button>
+          <button type="submit" [disabled]="!alteracao.id || (alteracao.quantidade != null && !quantidadeValida(alteracao.quantidade))">Salvar alteração</button>
         </form>
       }
 
@@ -180,7 +183,7 @@ function alteracaoVazia(): AtualizacaoVenda {
                   <td>{{ v.id }}</td>
                   <td>{{ v.nome_cliente }}</td>
                   <td>{{ v.descricao_produto }}</td>
-                  <td><input type="number" step="0.01" [(ngModel)]="edicao.quantidade" /></td>
+                  <td><input type="number" step="1" min="1" inputmode="numeric" (keydown)="somenteInteiro($event)" (paste)="colarSomenteInteiro($event)" [(ngModel)]="edicao.quantidade" /></td>
                   <td><input type="number" step="0.01" [(ngModel)]="edicao.valor" /></td>
                   <td class="num">{{ (edicao.quantidade ?? 0) * (edicao.valor ?? 0) | number: '1.2-2' }}</td>
                   <td>{{ v.data_pagamento | date: 'dd/MM/yyyy HH:mm' }}</td>
@@ -194,7 +197,7 @@ function alteracaoVazia(): AtualizacaoVenda {
                   </td>
                   <td class="num">{{ v.saldo_pagar_cliente ?? 0 | number: '1.2-2' }}</td>
                   <td class="acoes">
-                    <button class="pequeno" (click)="salvarEdicao()">Salvar</button>
+                    <button class="pequeno" (click)="salvarEdicao()" [disabled]="!quantidadeValida(edicao.quantidade)">Salvar</button>
                     <button class="secundario pequeno" (click)="editandoId.set(null)">Cancelar</button>
                   </td>
                   <td></td>
@@ -384,7 +387,23 @@ export class VendasComponent {
     if (p) this.nova.valor = p.preco;
   }
 
+  /** Bloqueia no campo Quantidade as teclas que formariam número não inteiro (vírgula, ponto, sinal, expoente) */
+  somenteInteiro(e: KeyboardEvent): void {
+    if ([',', '.', '-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+  }
+
+  /** Ao colar no campo Quantidade, aceita só texto formado por dígitos */
+  colarSomenteInteiro(e: ClipboardEvent): void {
+    const texto = e.clipboardData?.getData('text') ?? '';
+    if (!/^\d+$/.test(texto.trim())) e.preventDefault();
+  }
+
+  quantidadeValida(q: number | null | undefined): boolean {
+    return q != null && Number.isInteger(q) && q >= 1;
+  }
+
   cadastrar(): void {
+    if (!this.quantidadeValida(this.nova.quantidade)) return;
     this.executar(this.vendaApi.cadastrar(this.nova), () => {
       this.sucesso.set('Venda cadastrada com sucesso.');
       this.nova = vendaVazia();
@@ -401,6 +420,7 @@ export class VendasComponent {
   }
 
   salvarEdicao(): void {
+    if (!this.quantidadeValida(this.edicao.quantidade)) return;
     this.executar(this.vendaApi.alterar(this.edicao), (r) => {
       this.recarregar();
       this.sucesso.set(`Venda ${r.id} alterada com sucesso.`);
@@ -408,6 +428,7 @@ export class VendasComponent {
   }
 
   alterarPorId(): void {
+    if (this.alteracao.quantidade != null && !this.quantidadeValida(this.alteracao.quantidade)) return;
     this.executar(this.vendaApi.alterar(this.alteracao), (r) => {
       this.sucesso.set(`Venda ${r.id} alterada. Novo total: ${r.total.toFixed(2)}`);
     });
