@@ -18,6 +18,8 @@ const TITULOS: Record<string, string> = {
   inativar: 'Produtos — inativar',
 };
 
+type CampoOrdenacao = 'id' | 'descricao' | 'preco' | 'casco' | 'bloqueado';
+
 function produtoVazio(): Produto {
   return { descricao: '', preco: null, casco: 0, bloqueado: 0 };
 }
@@ -117,8 +119,16 @@ function produtoVazio(): Produto {
         <table [attr.aria-busy]="carregando()">
           <thead>
             <tr>
-              <th>ID</th><th>Descrição</th><th class="num">Preço</th><th>Casco</th><th>Situação</th>
-              @if (acao() === 'listar') { <th>Alterar</th> }
+              @if (acao() === 'listar') {
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'id', rotulo: 'ID', num: false }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'descricao', rotulo: 'Descrição', num: false }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'preco', rotulo: 'Preço', num: true }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'casco', rotulo: 'Casco', num: false }" />
+                <ng-container *ngTemplateOutlet="thOrdenavel; context: { campo: 'bloqueado', rotulo: 'Situação', num: false }" />
+                <th>Alterar</th>
+              } @else {
+                <th>ID</th><th>Descrição</th><th class="num">Preço</th><th>Casco</th><th>Situação</th>
+              }
               <th>Ação</th>
             </tr>
           </thead>
@@ -130,7 +140,7 @@ function produtoVazio(): Produto {
                 </tr>
               }
             } @else {
-            @for (p of lista(); track p.id) {
+            @for (p of listaOrdenada(); track p.id) {
               <tr [class.inativo]="p.bloqueado === 1">
                 <td>{{ p.id }}</td>
                 <td>{{ p.descricao }}</td>
@@ -163,6 +173,15 @@ function produtoVazio(): Produto {
           </tbody>
         </table>
       </div>
+    </ng-template>
+
+    <ng-template #thOrdenavel let-campo="campo" let-rotulo="rotulo" let-num="num">
+      <th class="ordenavel" [class.num]="num" tabindex="0" role="columnheader"
+          [attr.aria-sort]="ordemCampo() === campo ? (ordemDir() === 'asc' ? 'ascending' : 'descending') : 'none'"
+          [title]="'Ordenar por ' + rotulo"
+          (click)="ordenarPor(campo)" (keydown.enter)="ordenarPor(campo)" (keydown.space)="$event.preventDefault(); ordenarPor(campo)">
+        {{ rotulo }}<span class="seta" aria-hidden="true">{{ ordemCampo() === campo ? (ordemDir() === 'asc' ? '▲' : '▼') : '↕' }}</span>
+      </th>
     </ng-template>
 
     <ng-template #formulario>
@@ -212,6 +231,25 @@ export class ProdutosComponent {
   /** filtro da tela "listar todos": parte do nome do produto (vazio = todos) */
   filtroNome = '';
   lista = signal<Produto[]>([]);
+  /**
+   * Ordenação da tela "listar todos" (clique no cabeçalho alterna crescente/decrescente).
+   * null = ordem em que a API devolveu; as outras telas de listagem não ordenam.
+   */
+  ordemCampo = signal<CampoOrdenacao | null>(null);
+  ordemDir = signal<'asc' | 'desc'>('asc');
+  listaOrdenada = computed(() => {
+    const campo = this.ordemCampo();
+    const lista = this.lista();
+    if (!campo || this.acao() !== 'listar') return lista;
+    const fator = this.ordemDir() === 'asc' ? 1 : -1;
+    return [...lista].sort((a, b) => {
+      const r = campo === 'descricao'
+        ? (a.descricao ?? '').localeCompare(b.descricao ?? '', 'pt-BR', { sensitivity: 'base' })
+        : (a[campo] ?? 0) - (b[campo] ?? 0);
+      // desempate estável pelo ID, para a ordem não "pular" entre cliques
+      return (r || (a.id ?? 0) - (b.id ?? 0)) * fator;
+    });
+  });
   detalhe = signal<Produto | null>(null);
   form = signal<Produto | null>(null);
   /** true enquanto a listagem/pesquisa por nome está em andamento: a tabela mostra o "Aguarde" em skeleton */
@@ -236,6 +274,8 @@ export class ProdutosComponent {
     this.detalhe.set(null);
     this.pagina.set(0);
     this.filtroNome = '';
+    this.ordemCampo.set(null);
+    this.ordemDir.set('asc');
     this.form.set(acao === 'cadastrar' ? produtoVazio() : null);
     this.recarregar();
     const idNum = Number(idParam);
@@ -276,6 +316,16 @@ export class ProdutosComponent {
     const obs = filtro ? this.api.pesquisarNome(filtro) : this.api.listarTodos();
     this.carregando.set(true);
     this.executar(obs.pipe(finalize(() => this.carregando.set(false))), (r) => this.lista.set(r));
+  }
+
+  /** Clique no cabeçalho: mesma coluna inverte a direção; coluna nova começa crescente */
+  ordenarPor(campo: CampoOrdenacao): void {
+    if (this.ordemCampo() === campo) {
+      this.ordemDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      this.ordemCampo.set(campo);
+      this.ordemDir.set('asc');
+    }
   }
 
   limparFiltro(): void {

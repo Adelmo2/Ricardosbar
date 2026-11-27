@@ -165,7 +165,7 @@ function alteracaoVazia(): AtualizacaoVenda {
             <tr>
               <th>ID</th><th>Cliente</th><th>Produto</th>
               <th class="num">Qtde</th><th class="num">Valor</th><th class="num">Total</th>
-              <th>Data</th>@if (acao() !== 'listar') { <th>Cupom</th> }<th>Pago</th><th class="num">Saldo do Cliente</th>
+              <th>Data</th>@if (acao() !== 'listar') { <th>Cupom</th><th>Pago</th> }<th class="num col-saldo">Saldo do Cliente</th>
               <th>Alterar</th><th>Excluir</th>
             </tr>
           </thead>
@@ -191,10 +191,10 @@ function alteracaoVazia(): AtualizacaoVenda {
                     <td>
                       <select [(ngModel)]="edicao.cupom"><option [ngValue]="0">Não</option><option [ngValue]="1">Sim</option></select>
                     </td>
+                    <td>
+                      <select [(ngModel)]="edicao.pago"><option [ngValue]="0">Não</option><option [ngValue]="1">Sim</option></select>
+                    </td>
                   }
-                  <td>
-                    <select [(ngModel)]="edicao.pago"><option [ngValue]="0">Não</option><option [ngValue]="1">Sim</option></select>
-                  </td>
                   <td class="num">{{ v.saldo_pagar_cliente ?? 0 | number: '1.2-2' }}</td>
                   <td class="acoes">
                     <button class="pequeno" (click)="salvarEdicao()" [disabled]="!quantidadeValida(edicao.quantidade)">Salvar</button>
@@ -210,9 +210,11 @@ function alteracaoVazia(): AtualizacaoVenda {
                   <td class="num">{{ v.quantidade | number: '1.0-2' }}</td>
                   <td class="num">{{ v.valor | number: '1.2-2' }}</td>
                   <td class="num">{{ v.total | number: '1.2-2' }}</td>
-                  <td>{{ v.data_pagamento | date: 'dd/MM/yyyy HH:mm' }}</td>
-                  @if (acao() !== 'listar') { <td>{{ v.cupom === 1 ? 'Sim' : 'Não' }}</td> }
-                  <td>{{ v.pago === 1 ? 'Sim' : 'Não' }}</td>
+                  <td class="col-data">{{ v.data_pagamento | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  @if (acao() !== 'listar') {
+                    <td>{{ v.cupom === 1 ? 'Sim' : 'Não' }}</td>
+                    <td>{{ v.pago === 1 ? 'Sim' : 'Não' }}</td>
+                  }
                   <td class="num">{{ v.saldo_pagar_cliente ?? 0 | number: '1.2-2' }}</td>
                   <td><button class="secundario pequeno" (click)="editar(v)">Alterar</button></td>
                   <td><button class="perigo pequeno" (click)="excluir(v.id)">Excluir</button></td>
@@ -225,7 +227,7 @@ function alteracaoVazia(): AtualizacaoVenda {
           </tbody>
           @if (vendas().length && !carregando()) {
             <tfoot>
-              <tr><th colspan="5">Total geral</th><th class="num">{{ totalGeral() | number: '1.2-2' }}</th><th [attr.colspan]="acao() === 'listar' ? 5 : 6"></th></tr>
+              <tr><th colspan="5">Total geral</th><th class="num">{{ totalGeral() | number: '1.2-2' }}</th><th [attr.colspan]="acao() === 'listar' ? 4 : 6"></th></tr>
             </tfoot>
           }
         </table>
@@ -247,6 +249,11 @@ function alteracaoVazia(): AtualizacaoVenda {
     /* Tela "listar todas": rótulos da pesquisa e cabeçalhos das colunas 40% maiores (.85rem -> 1.19rem). */
     .pesquisa label, table.lista-todas th { font-size: 1.19rem; }
     .pesquisa label input { font-size: .85rem; }
+    /* Tela "listar todas": coluna "Data" com espaçamento lateral menor (fonte igual à das outras colunas). */
+    table.lista-todas td.col-data { padding-left: 7.2px; padding-right: 7.2px; }
+    /* Tela "listar todas": coluna "Saldo do Cliente" 15% mais estreita. A largura vem do título,
+       então o título fica com fonte e espaçamento lateral a 85% (1.19rem -> 1.01rem). */
+    table.lista-todas th.col-saldo { font-size: 1.01rem; padding-left: 8.5px; padding-right: 8.5px; }
   `,
 })
 export class VendasComponent {
@@ -277,7 +284,7 @@ export class VendasComponent {
   /** true enquanto uma pesquisa está em andamento: a tabela mostra o "Aguarde" em skeleton */
   carregando = signal(false);
   readonly linhasSkeleton = [1, 2, 3, 4, 5, 6];
-  colunasSkeleton = computed(() => Array.from({ length: this.acao() === 'listar' ? 11 : 12 }));
+  colunasSkeleton = computed(() => Array.from({ length: this.acao() === 'listar' ? 10 : 12 }));
   totalGeral = computed(() => this.vendas().reduce((s, v) => s + (v.total ?? 0), 0));
 
   filtroId: number | null = null;
