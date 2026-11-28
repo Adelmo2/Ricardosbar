@@ -112,7 +112,10 @@ function alteracaoVazia(): AtualizacaoVenda {
               <input name="quantidade" type="number" step="1" min="1" inputmode="numeric"
                      [(ngModel)]="nova.quantidade" (keydown)="somenteInteiro($event)" (paste)="colarSomenteInteiro($event)" />
             </label>
-            <label>Valor unitário <input name="valor" type="number" step="0.01" [(ngModel)]="nova.valor" /></label>
+            <label>Valor unitário{{ produtoCasco() ? '' : ' *' }}
+              <input name="valor" type="number" step="0.01" [(ngModel)]="nova.valor"
+                     [placeholder]="produtoCasco() ? 'Opcional (casco)' : ''" />
+            </label>
             <label>Cupom
               <select name="cupom" [(ngModel)]="nova.cupom">
                 <option [ngValue]="0">Não</option><option [ngValue]="1">Sim</option>
@@ -128,7 +131,7 @@ function alteracaoVazia(): AtualizacaoVenda {
             Total: <strong>{{ (nova.quantidade ?? 0) * (nova.valor ?? 0) | number: '1.2-2' }}</strong>
             · O produto <strong>{{ produtoPagamento() ?? 'de ID 1' }}</strong> é tratado pela API como pagamento (abate o valor do saldo do cliente).
           </p>
-          <button type="submit" [disabled]="!nova.id_clientes || !nova.id_produtos || !quantidadeValida(nova.quantidade)">Cadastrar venda</button>
+          <button type="submit" [disabled]="!nova.id_clientes || !nova.id_produtos || !quantidadeValida(nova.quantidade) || !valorValido()">Cadastrar venda</button>
         </form>
       }
 
@@ -459,9 +462,22 @@ export class VendasComponent {
     return q != null && Number.isInteger(q) && q >= 1;
   }
 
+  /** Produto escolhido na tela "cadastrar" é casco (descrição contém a palavra "CASCO")? */
+  produtoCasco(): boolean {
+    const p = this.produtos().find((x) => x.id === this.nova.id_produtos);
+    return !!p?.descricao?.toUpperCase().includes('CASCO');
+  }
+
+  /** Valor unitário é obrigatório, exceto para produto casco e para o pagamento (produto de ID 1) */
+  valorValido(): boolean {
+    if (this.produtoCasco() || this.nova.id_produtos === 1) return true;
+    return this.nova.valor != null && this.nova.valor > 0;
+  }
+
   cadastrar(): void {
-    if (!this.quantidadeValida(this.nova.quantidade)) return;
-    this.executar(this.vendaApi.cadastrar(this.nova), () => {
+    if (!this.quantidadeValida(this.nova.quantidade) || !this.valorValido()) return;
+    const dados: CadastroVenda = { ...this.nova, valor: this.nova.valor ?? 0 };
+    this.executar(this.vendaApi.cadastrar(dados), () => {
       this.sucesso.set('Venda cadastrada com sucesso.');
       this.nova = vendaVazia();
       // recarrega os clientes para refletir o saldo a pagar atualizado

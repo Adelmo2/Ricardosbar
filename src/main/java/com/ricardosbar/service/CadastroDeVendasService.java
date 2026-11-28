@@ -37,6 +37,12 @@ public class CadastroDeVendasService {
         var cliente =  clienteRepository.getReferenceById(dados.id_clientes());
         var produto =  produtoRepository.getReferenceById(dados.id_produtos());
 
+        // Valor unitário em branco vale 0 (permitido para produto casco; os demais são barrados abaixo)
+        if (dados.valor() == null) {
+            dados = new DadosCadastroVendaDto(dados.id_produtos(), dados.id_clientes(), dados.quantidade(),
+                    dados.data_pagamento(), dados.hora_pagamento(), 0.0, dados.total(), dados.cupom(), dados.pago());
+        }
+
         if (produto.getBloqueado() == 1) {
             throw new validacaoException("Produto bloqueado!");
         }
@@ -55,7 +61,7 @@ public class CadastroDeVendasService {
             if (dados.quantidade() == 0) {
                 throw new validacaoException("Informe a quantidade!");
             }
-            if (dados.valor() == 0 && produto.getCasco() == 0) {
+            if (dados.valor() == 0 && !Integer.valueOf(1).equals(produto.getCasco())) {
                 throw new validacaoException("Informe o valor!");
             }
         }
@@ -97,7 +103,7 @@ public class CadastroDeVendasService {
             if (venda.getQuantidade() == 0) {
                 throw new validacaoException("Informe a quantidade!");
             }
-            if (venda.getValor() == 0 && venda.getProduto().getCasco() == 0) {
+            if (venda.getValor() == 0 && !Integer.valueOf(1).equals(venda.getProduto().getCasco())) {
                 throw new validacaoException("Informe o valor!");
             }
             if (cliente.getLimite() > 0 && venda.getTotal() > totalAntigo && venda.getTotal() > cliente.getLimite()) {
